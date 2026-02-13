@@ -1337,7 +1337,7 @@ Projected Impact: Improving conversion to 12% would increase MRR by $6,720 witho
             submitButton.textContent = 'Submitting...';
             
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('waitlist')
                     .insert([
                         { 
