@@ -61,7 +61,6 @@
             padding: 0 2rem;
         }
         
-        /* Header / Logo */
         header {
             position: fixed;
             top: 0;
@@ -113,7 +112,6 @@
             color: var(--white);
         }
         
-        /* Hero Section */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -237,7 +235,6 @@
             letter-spacing: 0.02em;
         }
         
-        /* Section Styling */
         section {
             padding: 8rem 0;
             border-bottom: 1px solid var(--neutral-200);
@@ -303,7 +300,6 @@
             margin-bottom: 3rem;
         }
         
-        /* Problem Section */
         .problem-section {
             background: var(--white);
         }
@@ -373,7 +369,6 @@
             line-height: 1.65;
         }
         
-        /* Diagnostic Section */
         .diagnostic-section {
             background: var(--neutral-100);
         }
@@ -434,7 +429,6 @@
             line-height: 1.65;
         }
         
-        /* Framework Section with Icons */
         .framework-section {
             background: var(--white);
         }
@@ -534,7 +528,6 @@
             border-right-color: rgba(255, 255, 255, 0.2);
         }
         
-        /* Output Preview Section */
         .output-section {
             background: var(--neutral-100);
         }
@@ -612,7 +605,6 @@
             font-weight: 600;
         }
         
-        /* Outcomes Section */
         .outcomes-section {
             background: var(--white);
         }
@@ -655,7 +647,6 @@
             line-height: 1.5;
         }
         
-        /* Credibility Section */
         .credibility-section {
             background: var(--neutral-900);
             color: var(--white);
@@ -728,7 +719,6 @@
             line-height: 1.6;
         }
         
-        /* Beta Cohort CTA */
         .beta-section {
             background: var(--primary-accent);
             color: var(--white);
@@ -808,6 +798,11 @@
             color: var(--white);
         }
         
+        .cta-secondary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
         .beta-terms {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -833,7 +828,6 @@
             opacity: 0.9;
         }
         
-        /* FAQ Section */
         .faq-section {
             background: var(--white);
         }
@@ -870,7 +864,6 @@
             line-height: 1.7;
         }
         
-        /* Footer */
         footer {
             background: var(--neutral-900);
             color: rgba(255, 255, 255, 0.7);
@@ -920,7 +913,6 @@
             letter-spacing: 0.02em;
         }
         
-        /* Responsive */
         @media (max-width: 968px) {
             section {
                 padding: 5rem 0;
@@ -977,7 +969,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header>
         <div class="header-content">
             <div class="logo-container">
@@ -987,7 +978,6 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
             <div class="framework-badge">Sequential Leverage Diagnostic™</div>
@@ -998,7 +988,6 @@
         </div>
     </section>
 
-    <!-- Problem Section -->
     <section class="problem-section">
         <div class="section-divider"></div>
         <div class="container">
@@ -1032,7 +1021,6 @@
         </div>
     </section>
 
-    <!-- Diagnostic Process -->
     <section class="diagnostic-section">
         <div class="section-divider"></div>
         <div class="container">
@@ -1061,7 +1049,6 @@
         </div>
     </section>
 
-    <!-- Framework Section with Icons -->
     <section class="framework-section">
         <div class="section-divider"></div>
         <div class="container">
@@ -1150,7 +1137,6 @@
         </div>
     </section>
 
-    <!-- Output Preview Section -->
     <section class="output-section">
         <div class="section-divider"></div>
         <div class="container">
@@ -1193,7 +1179,6 @@ Projected Impact: Improving conversion to 12% would increase MRR by $6,720 witho
         </div>
     </section>
 
-    <!-- Outcomes Section -->
     <section class="outcomes-section">
         <div class="section-divider"></div>
         <div class="container">
@@ -1223,7 +1208,6 @@ Projected Impact: Improving conversion to 12% would increase MRR by $6,720 witho
         </div>
     </section>
 
-    <!-- Credibility Section -->
     <section class="credibility-section">
         <div class="container">
             <div class="credibility-content">
@@ -1251,7 +1235,6 @@ Projected Impact: Improving conversion to 12% would increase MRR by $6,720 witho
         </div>
     </section>
 
-    <!-- Beta Cohort CTA -->
     <section class="beta-section" id="beta-cohort">
         <div class="container">
             <div class="beta-content">
@@ -1280,7 +1263,6 @@ Projected Impact: Improving conversion to 12% would increase MRR by $6,720 witho
         </div>
     </section>
 
-    <!-- FAQ Section -->
     <section class="faq-section">
         <div class="section-divider"></div>
         <div class="container">
@@ -1325,7 +1307,6 @@ Projected Impact: Improving conversion to 12% would increase MRR by $6,720 witho
         </div>
     </section>
 
-    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="footer-logo">
@@ -1337,15 +1318,55 @@ Projected Impact: Improving conversion to 12% would increase MRR by $6,720 witho
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        function handleSubmit(event) {
+        const SUPABASE_URL = 'https://raqwjzcdcfrwwnewwdke.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcXdqemNkY2Zyd3duZXd3ZGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5ODQ1MzAsImV4cCI6MjA4NjU2MDUzMH0.WEAZ1Kvp4wwQBL1wRJSc0T43C87u79nruU6UqJZpDoE';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function handleSubmit(event) {
             event.preventDefault();
-            const email = event.target.querySelector('input').value;
-            alert(`Application submitted. We'll review your qualification for the strategic beta cohort and respond to ${email} within 48 hours.`);
-            event.target.reset();
+            
+            const emailInput = event.target.querySelector('input[type="email"]');
+            const submitButton = event.target.querySelector('button[type="submit"]');
+            const email = emailInput.value.trim();
+            
+            submitButton.disabled = true;
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Submitting...';
+            
+            try {
+                const { data, error } = await supabase
+                    .from('waitlist')
+                    .insert([
+                        { 
+                            email: email,
+                            source: 'landing_page',
+                            status: 'pending'
+                        }
+                    ])
+                    .select();
+                
+                if (error) {
+                    if (error.code === '23505') {
+                        alert(`You're already on the waitlist! We'll be in touch soon.`);
+                    } else {
+                        throw error;
+                    }
+                } else {
+                    alert(`Application submitted successfully! We'll review your qualification for the strategic beta cohort and respond to ${email} within 48 hours.`);
+                    event.target.reset();
+                }
+            } catch (error) {
+                console.error('Error submitting to waitlist:', error);
+                alert('There was an error submitting your application. Please try again or contact us directly.');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            }
         }
 
-        // Smooth scroll for CTAs
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
