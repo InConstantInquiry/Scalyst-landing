@@ -1337,14 +1337,13 @@ Projected Impact: Improving conversion to 12% would increase MRR by $6,720 witho
             submitButton.textContent = 'Submitting...';
             
             try {
-                const { data, error } = await client
+                const { error } = await client
                     .from('waitlist')
-                    .insert([{ 
+                    .insert([{
                         email: email,
                         source: 'landing_page',
                         status: 'pending'
-                    }])
-                    .select();
+                    }]);
                 
                 if (error) {
                     if (error.code === '23505') {
