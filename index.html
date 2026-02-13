@@ -1317,15 +1317,16 @@ Projected Impact: Improving conversion to 12% would increase MRR by $6,720 witho
             <p class="founder-note">Built by operators. Not theorists.</p>
         </div>
     </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // Initialize Supabase
         const SUPABASE_URL = 'https://raqwjzcdcfrwwnewwdke.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcXdqemNkY2Zyd3duZXd3ZGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5ODQ1MzAsImV4cCI6MjA4NjU2MDUzMH0.WEAZ1Kvp4wwQBL1wRJSc0T43C87u79nruU6UqJZpDoE';
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        async function handleSubmit(event) {
+        // Make handleSubmit global
+        window.handleSubmit = async function(event) {
             event.preventDefault();
             
             const emailInput = event.target.querySelector('input[type="email"]');
@@ -1333,40 +1334,39 @@ Projected Impact: Improving conversion to 12% would increase MRR by $6,720 witho
             const email = emailInput.value.trim();
             
             submitButton.disabled = true;
-            const originalText = submitButton.textContent;
             submitButton.textContent = 'Submitting...';
             
             try {
-                const { data, error } = await supabaseClient
+                const { data, error } = await client
                     .from('waitlist')
-                    .insert([
-                        { 
-                            email: email,
-                            source: 'landing_page',
-                            status: 'pending'
-                        }
-                    ])
+                    .insert([{ 
+                        email: email,
+                        source: 'landing_page',
+                        status: 'pending'
+                    }])
                     .select();
                 
                 if (error) {
                     if (error.code === '23505') {
-                        alert(`You're already on the waitlist! We'll be in touch soon.`);
+                        alert("You're already on the waitlist! We'll be in touch soon.");
                     } else {
-                        throw error;
+                        console.error('Supabase error:', error);
+                        alert('Error: ' + error.message);
                     }
                 } else {
-                    alert(`Application submitted successfully! We'll review your qualification for the strategic beta cohort and respond to ${email} within 48 hours.`);
+                    alert("Application submitted successfully! We'll review your qualification for the strategic beta cohort and respond to " + email + " within 48 hours.");
                     event.target.reset();
                 }
             } catch (error) {
-                console.error('Error submitting to waitlist:', error);
-                alert('There was an error submitting your application. Please try again or contact us directly.');
+                console.error('Error:', error);
+                alert('There was an error submitting your application. Please try again.');
             } finally {
                 submitButton.disabled = false;
-                submitButton.textContent = originalText;
+                submitButton.textContent = 'Apply Now';
             }
-        }
+        };
 
+        // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -1378,4 +1378,7 @@ Projected Impact: Improving conversion to 12% would increase MRR by $6,720 witho
         });
     </script>
 </body>
+</html>
+
+    
 </html>
