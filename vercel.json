@@ -1,0 +1,14 @@
+{
+  "rewrites": [
+    { "source": "/api/analytics", "destination": "/api/analytics.js" }
+  ],
+  "headers": [
+    {
+      "source": "/dashboard/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+        { "key": "Cache-Control", "value": "no-store" }
+      ]
+    }
+  ]
+}
