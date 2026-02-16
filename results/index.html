@@ -850,7 +850,8 @@
                 .from('diagnostics')
                 .update({
                     accuracy_rating: selectedRating,
-                    accuracy_comment: comment || null
+                    accuracy_comment: comment || null,
+                    feedback_submitted_at: new Date().toISOString()
                 })
                 .eq('id', rowId)
                 .then(function(response) {
