@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scalyst &mdash; Monthly Check-In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600;700&family=DM+Serif+Display:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-light: #CCFFD6;
+            --secondary-light: #AFEFA7;
+            --mid-accent: #91DE78;
+            --primary-accent: #3D9910;
+            --primary-accent-light: #56BD1A;
+            --dark-anchor: #265420;
+            --darker-anchor: #1A3814;
+            --white: #FFFFFF;
+            --near-black: #0F0F0F;
+            --neutral-900: #1A1A1A;
+            --neutral-700: #404040;
+            --neutral-500: #737373;
+            --neutral-200: #E5E5E5;
+            --neutral-100: #F5F5F5;
+            --font-display: 'IBM Plex Sans', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+            --font-serif: 'DM Serif Display', serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-display); color: var(--neutral-900); line-height: 1.6; -webkit-font-smoothing: antialiased; background: var(--white); }
+        header { position: fixed; top: 0; left: 0; right: 0; background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); border-bottom: 1px solid var(--neutral-200); z-index: 1000; padding: 1.25rem 0; }
+        .header-content { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo-text { font-family: var(--font-serif); font-size: 1.75rem; font-weight: 400; color: var(--near-black); letter-spacing: -0.02em; text-decoration: none; }
+        .nav-back { font-size: 0.875rem; font-weight: 600; color: var(--neutral-700); text-decoration: none; font-family: var(--font-mono); letter-spacing: 0.02em; }
+        .nav-back:hover { color: var(--primary-accent); }
+        main { max-width: 720px; margin: 0 auto; padding: 7rem 2rem 5rem; }
+        .page-badge { display: inline-block; font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700; color: var(--darker-anchor); background: var(--white); padding: 0.5rem 1rem; border: 1.5px solid var(--primary-accent); border-radius: 4px; margin-bottom: 1.5rem; letter-spacing: 0.08em; text-transform: uppercase; }
+        h1 { font-size: 2.25rem; font-weight: 700; line-height: 1.15; color: var(--near-black); margin-bottom: 1rem; letter-spacing: -0.025em; }
+        .page-description { font-size: 1.125rem; color: var(--neutral-700); margin-bottom: 2rem; line-height: 1.6; }
+
+        /* Previous constraint banner */
+        .previous-constraint {
+            background: var(--neutral-100);
+            border: 1.5px solid var(--neutral-200);
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2.5rem;
+            display: none;
+        }
+        .previous-constraint.visible { display: block; }
+        .previous-constraint-label {
+            font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700;
+            letter-spacing: 0.18em; text-transform: uppercase; color: var(--neutral-500); margin-bottom: 0.25rem;
+        }
+        .previous-constraint-value { font-size: 1.25rem; font-weight: 700; color: var(--near-black); }
+        .previous-constraint-date { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--neutral-500); margin-top: 0.25rem; }
+
+        /* Email lookup */
+        .email-lookup { margin-bottom: 2.5rem; }
+        .email-lookup.hidden { display: none; }
+        .email-lookup p { font-size: 1rem; color: var(--neutral-700); margin-bottom: 1rem; }
+        .email-lookup-form { display: flex; gap: 0.75rem; }
+        .email-lookup-form input {
+            flex: 1; padding: 0.875rem 1rem; border: 1.5px solid var(--neutral-200);
+            border-radius: 6px; font-size: 1rem; font-family: var(--font-mono);
+            color: var(--neutral-900); background: var(--white); transition: border-color 0.2s ease;
+        }
+        .email-lookup-form input:focus { outline: none; border-color: var(--primary-accent); box-shadow: 0 0 0 3px rgba(61,153,16,0.08); }
+        .email-lookup-form button {
+            padding: 0.875rem 1.75rem; background: var(--near-black); color: var(--white);
+            border: none; border-radius: 6px; font-size: 0.9375rem; font-weight: 600;
+            cursor: pointer; font-family: var(--font-display); transition: all 0.3s ease; white-space: nowrap;
+        }
+        .email-lookup-form button:hover { background: var(--neutral-700); }
+        .email-lookup-form button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .email-error { color: #D32F2F; font-size: 0.8125rem; margin-top: 0.5rem; display: none; }
+        .email-error.visible { display: block; }
+        .email-not-found { color: var(--neutral-500); font-size: 0.875rem; margin-top: 0.75rem; display: none; }
+        .email-not-found.visible { display: block; }
+        .email-not-found a { color: var(--primary-accent); }
+
+        /* Diagnostic form (hidden until email verified) */
+        .diagnostic-form-wrap { display: none; }
+        .diagnostic-form-wrap.visible { display: block; animation: fadeIn 0.4s ease-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group { margin-bottom: 3rem; }
+        .group-label { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--primary-accent); margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--neutral-200); }
+        .field { display: flex; flex-direction: column; margin-bottom: 1.25rem; }
+        .field label { font-size: 0.9375rem; font-weight: 600; color: var(--near-black); margin-bottom: 0.375rem; }
+        .field .hint { font-size: 0.8125rem; color: var(--neutral-500); margin-bottom: 0.5rem; font-family: var(--font-mono); letter-spacing: 0.01em; }
+        .field input { padding: 0.875rem 1rem; border: 1.5px solid var(--neutral-200); border-radius: 6px; font-size: 1rem; font-family: var(--font-mono); color: var(--neutral-900); background: var(--white); transition: border-color 0.2s ease; }
+        .field input:focus { outline: none; border-color: var(--primary-accent); box-shadow: 0 0 0 3px rgba(61,153,16,0.08); }
+        .field input::placeholder { color: var(--neutral-500); font-family: var(--font-mono); }
+        .field input.error { border-color: #D32F2F; }
+        .field .prev-value { font-family: var(--font-mono); font-size: 0.75rem; color: var(--neutral-500); margin-top: 0.375rem; }
+        .submit-btn { display: block; width: 100%; padding: 1.25rem 2.5rem; background: var(--near-black); color: var(--white); border: none; border-radius: 6px; font-size: 1.125rem; font-weight: 600; cursor: pointer; font-family: var(--font-display); transition: all 0.3s ease; letter-spacing: -0.01em; }
+        .submit-btn:hover { background: var(--neutral-700); transform: translateY(-1px); }
+        .form-note { text-align: center; margin-top: 1.25rem; font-size: 0.8125rem; color: var(--neutral-500); font-family: var(--font-mono); letter-spacing: 0.02em; }
+
+        @media (max-width: 640px) { main { padding: 6rem 1.25rem 3rem; } h1 { font-size: 1.75rem; } .email-lookup-form { flex-direction: column; } }
+    </style>
+    <script defer data-domain="scalyst.digital" src="https://plausible.io/js/script.tagged-events.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="/" class="logo-text">Scalyst</a>
+            <a href="/" class="nav-back">&larr; Back</a>
+        </div>
+    </header>
+    <main>
+        <div class="page-badge">Monthly Check-In</div>
+        <h1>Update your numbers</h1>
+        <p class="page-description">Enter your current metrics. We'll compare them against your last diagnostic and show you whether your constraint has shifted.</p>
+
+        <!-- Previous constraint banner -->
+        <div class="previous-constraint" id="prevConstraint">
+            <div class="previous-constraint-label">Last Constraint</div>
+            <div class="previous-constraint-value" id="prevConstraintValue">&mdash;</div>
+            <div class="previous-constraint-date" id="prevConstraintDate"></div>
+        </div>
+
+        <!-- Email lookup (shown first if no email in URL) -->
+        <div class="email-lookup" id="emailLookup">
+            <p>Enter the email you used for your first diagnostic so we can pull up your previous numbers.</p>
+            <form class="email-lookup-form" id="emailLookupForm">
+                <input type="email" id="lookupEmail" placeholder="your@email.com" required>
+                <button type="submit" id="lookupBtn">Look Up</button>
+            </form>
+            <div class="email-error" id="lookupError">Please enter a valid email address.</div>
+            <div class="email-not-found" id="lookupNotFound">No previous diagnostic found for that email. <a href="/diagnostic/">Take the diagnostic first.</a></div>
+        </div>
+
+        <!-- Diagnostic form (hidden until email verified) -->
+        <div class="diagnostic-form-wrap" id="formWrap">
+            <form id="updateForm" novalidate>
+                <div class="form-group">
+                    <div class="group-label">Revenue &amp; Costs</div>
+                    <div class="field">
+                        <label for="monthlyRevenue">Monthly Revenue ($)</label>
+                        <div class="hint">Total monthly revenue before expenses</div>
+                        <input type="number" id="monthlyRevenue" name="monthlyRevenue" placeholder="12000" min="0" step="1" required>
+                        <div class="prev-value" id="prev_monthlyRevenue"></div>
+                    </div>
+                    <div class="field">
+                        <label for="costOfDelivery">Cost of Delivery ($)</label>
+                        <div class="hint">Direct costs to fulfill your service each month</div>
+                        <input type="number" id="costOfDelivery" name="costOfDelivery" placeholder="4000" min="0" step="1" required>
+                        <div class="prev-value" id="prev_costOfDelivery"></div>
+                    </div>
+                    <div class="field">
+                        <label for="fixedExpenses">Fixed Expenses ($)</label>
+                        <div class="hint">Rent, software, salaries, and other recurring overhead</div>
+                        <input type="number" id="fixedExpenses" name="fixedExpenses" placeholder="3000" min="0" step="1" required>
+                        <div class="prev-value" id="prev_fixedExpenses"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="group-label">Sales &amp; Pipeline</div>
+                    <div class="field">
+                        <label for="leadsPerMonth">Leads per Month</label>
+                        <div class="hint">Total qualified leads entering your pipeline</div>
+                        <input type="number" id="leadsPerMonth" name="leadsPerMonth" placeholder="40" min="0" step="1" required>
+                        <div class="prev-value" id="prev_leadsPerMonth"></div>
+                    </div>
+                    <div class="field">
+                        <label for="dealsClosedPerMonth">Deals Closed per Month</label>
+                        <div class="hint">Number of new clients or deals won</div>
+                        <input type="number" id="dealsClosedPerMonth" name="dealsClosedPerMonth" placeholder="6" min="0" step="1" required>
+                        <div class="prev-value" id="prev_dealsClosedPerMonth"></div>
+                    </div>
+                    <div class="field">
+                        <label for="averageDealValue">Average Deal Value ($)</label>
+                        <div class="hint">Revenue per closed deal or new engagement</div>
+                        <input type="number" id="averageDealValue" name="averageDealValue" placeholder="2000" min="0" step="1" required>
+                        <div class="prev-value" id="prev_averageDealValue"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="group-label">Capacity &amp; Operations</div>
+                    <div class="field">
+                        <label for="maxCapacityPerMonth">Max Capacity per Month</label>
+                        <div class="hint">Maximum clients or projects you can deliver per month</div>
+                        <input type="number" id="maxCapacityPerMonth" name="maxCapacityPerMonth" placeholder="15" min="1" step="1" required>
+                        <div class="prev-value" id="prev_maxCapacityPerMonth"></div>
+                    </div>
+                    <div class="field">
+                        <label for="currentOutputPerMonth">Current Output per Month</label>
+                        <div class="hint">Clients or projects you're currently delivering</div>
+                        <input type="number" id="currentOutputPerMonth" name="currentOutputPerMonth" placeholder="10" min="0" step="1" required>
+                        <div class="prev-value" id="prev_currentOutputPerMonth"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="group-label">Cash Position</div>
+                    <div class="field">
+                        <label for="cashOnHand">Cash on Hand ($)</label>
+                        <div class="hint">Current liquid cash available to the business</div>
+                        <input type="number" id="cashOnHand" name="cashOnHand" placeholder="20000" min="0" step="1" required>
+                        <div class="prev-value" id="prev_cashOnHand"></div>
+                    </div>
+                    <div class="field">
+                        <label for="averageDaysToCollect">Average Days to Collect</label>
+                        <div class="hint">Days from invoice to payment received</div>
+                        <input type="number" id="averageDaysToCollect" name="averageDaysToCollect" placeholder="30" min="0" step="1" required>
+                        <div class="prev-value" id="prev_averageDaysToCollect"></div>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">Run Check-In</button>
+                <p class="form-note">We'll compare with your previous diagnostic.</p>
+            </form>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/lib/constraintLogic.js"></script>
+    <script>
+        var SUPABASE_URL = 'https://raqwjzcdcfrwwnewwdke.supabase.co';
+        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcXdqemNkY2Zyd3duZXd3ZGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5ODQ1MzAsImV4cCI6MjA4NjU2MDUzMH0.WEAZ1Kvp4wwQBL1wRJSc0T43C87u79nruU6UqJZpDoE';
+        var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        var profileId = null;
+        var userEmail = null;
+        var lastSnapshot = null;
+
+        // Field mapping from DB columns to form IDs
+        var fieldMap = {
+            monthly_revenue: 'monthlyRevenue',
+            cost_of_delivery: 'costOfDelivery',
+            fixed_expenses: 'fixedExpenses',
+            leads_per_month: 'leadsPerMonth',
+            deals_closed_per_month: 'dealsClosedPerMonth',
+            average_deal_value: 'averageDealValue',
+            max_capacity_per_month: 'maxCapacityPerMonth',
+            current_output_per_month: 'currentOutputPerMonth',
+            cash_on_hand: 'cashOnHand',
+            average_days_to_collect: 'averageDaysToCollect'
+        };
+
+        // Check URL for email param
+        var params = new URLSearchParams(window.location.search);
+        var emailParam = params.get('email');
+
+        if (emailParam) {
+            document.getElementById('lookupEmail').value = emailParam;
+            lookupEmail(emailParam);
+        }
+
+        // Email lookup form
+        document.getElementById('emailLookupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var email = document.getElementById('lookupEmail').value.trim();
+            document.getElementById('lookupError').classList.remove('visible');
+            document.getElementById('lookupNotFound').classList.remove('visible');
+
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById('lookupError').classList.add('visible');
+                return;
+            }
+            lookupEmail(email);
+        });
+
+        function lookupEmail(email) {
+            var btn = document.getElementById('lookupBtn');
+            btn.disabled = true;
+            btn.textContent = 'Looking up...';
+
+            sb.from('business_profiles')
+                .select('id')
+                .eq('email', email)
+                .single()
+                .then(function(res) {
+                    if (res.error || !res.data) {
+                        btn.disabled = false;
+                        btn.textContent = 'Look Up';
+                        document.getElementById('lookupNotFound').classList.add('visible');
+                        return;
+                    }
+
+                    profileId = res.data.id;
+                    userEmail = email;
+
+                    // Get most recent snapshot
+                    return sb.from('constraint_snapshots')
+                        .select('*')
+                        .eq('business_id', profileId)
+                        .order('created_at', { ascending: false })
+                        .limit(1)
+                        .single();
+                })
+                .then(function(res) {
+                    if (!res || res.error || !res.data) {
+                        btn.disabled = false;
+                        btn.textContent = 'Look Up';
+                        document.getElementById('lookupNotFound').classList.add('visible');
+                        return;
+                    }
+
+                    lastSnapshot = res.data;
+                    showFormWithPrefill(lastSnapshot);
+                })
+                .catch(function(err) {
+                    console.error('Lookup error:', err);
+                    btn.disabled = false;
+                    btn.textContent = 'Look Up';
+                });
+        }
+
+        function showFormWithPrefill(snapshot) {
+            // Hide email lookup
+            document.getElementById('emailLookup').classList.add('hidden');
+
+            // Show previous constraint
+            var prevDate = new Date(snapshot.created_at);
+            var dateStr = prevDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            document.getElementById('prevConstraintValue').textContent = snapshot.primary_constraint;
+            document.getElementById('prevConstraintDate').textContent = 'As of ' + dateStr;
+            document.getElementById('prevConstraint').classList.add('visible');
+
+            // Pre-fill form fields and show previous values
+            Object.keys(fieldMap).forEach(function(dbCol) {
+                var formId = fieldMap[dbCol];
+                var val = snapshot[dbCol];
+                if (val !== null && val !== undefined) {
+                    var numVal = Math.round(Number(val));
+                    document.getElementById(formId).value = numVal;
+                    document.getElementById('prev_' + formId).textContent = 'Previous: ' + (dbCol.includes('days') ? numVal + ' days' : (dbCol.includes('revenue') || dbCol.includes('cost') || dbCol.includes('expenses') || dbCol.includes('value') || dbCol.includes('cash') ? '$' + numVal.toLocaleString() : numVal));
+                }
+            });
+
+            // Show form
+            document.getElementById('formWrap').classList.add('visible');
+        }
+
+        // Form submission
+        document.getElementById('updateForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var fields = [
+                'monthlyRevenue', 'costOfDelivery', 'fixedExpenses',
+                'leadsPerMonth', 'dealsClosedPerMonth', 'averageDealValue',
+                'maxCapacityPerMonth', 'currentOutputPerMonth',
+                'cashOnHand', 'averageDaysToCollect'
+            ];
+            var raw = {};
+            var valid = true;
+            fields.forEach(function(name) {
+                var input = document.getElementById(name);
+                var val = input.value.trim();
+                input.classList.remove('error');
+                if (val === '' || isNaN(Number(val))) {
+                    input.classList.add('error');
+                    valid = false;
+                } else {
+                    raw[name] = Number(val);
+                }
+            });
+            if (!valid) return;
+
+            var result = determineConstraint(raw);
+            var payload = {
+                raw: raw,
+                derived: result.derived,
+                constraint: result.constraint,
+                previousConstraint: lastSnapshot ? lastSnapshot.primary_constraint : null,
+                isUpdate: true,
+                email: userEmail,
+                businessId: profileId
+            };
+
+            // Save new snapshot to Supabase
+            if (profileId) {
+                sb.from('constraint_snapshots')
+                    .insert([{
+                        business_id: profileId,
+                        monthly_revenue: raw.monthlyRevenue,
+                        cost_of_delivery: raw.costOfDelivery,
+                        fixed_expenses: raw.fixedExpenses,
+                        leads_per_month: raw.leadsPerMonth,
+                        deals_closed_per_month: raw.dealsClosedPerMonth,
+                        average_deal_value: raw.averageDealValue,
+                        max_capacity_per_month: raw.maxCapacityPerMonth,
+                        current_output_per_month: raw.currentOutputPerMonth,
+                        cash_on_hand: raw.cashOnHand,
+                        average_days_to_collect: raw.averageDaysToCollect,
+                        gross_margin: result.derived.grossMargin,
+                        net_profit: result.derived.netProfit,
+                        net_margin: result.derived.netMargin,
+                        conversion_rate: result.derived.conversionRate,
+                        capacity_utilization: result.derived.capacityUtilization,
+                        monthly_burn: result.derived.monthlyBurn,
+                        runway_months: result.derived.runwayMonths === Infinity ? 9999 : result.derived.runwayMonths,
+                        primary_constraint: result.constraint
+                    }])
+                    .then(function() {});
+            }
+
+            sessionStorage.setItem('scalyst_diagnostic', JSON.stringify(payload));
+            window.location.href = '/results/';
+        });
+    </script>
+</body>
+</html>
