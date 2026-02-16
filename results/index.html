@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scalyst — Diagnostic Results</title>
+    <title>Scalyst â Diagnostic Results</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600;700&family=DM+Serif+Display:wght@400&display=swap" rel="stylesheet">
@@ -617,7 +617,7 @@
 
             <div class="constraint-card">
                 <div class="constraint-card-label">Your Primary Growth Constraint</div>
-                <div class="constraint-value" id="constraintLabel">—</div>
+                <div class="constraint-value" id="constraintLabel">â</div>
             </div>
 
             <!-- Email gate -->
@@ -657,7 +657,7 @@
                     <textarea id="feedbackComment" placeholder="Share any thoughts..."></textarea>
                 </div>
                 <button class="feedback-submit" id="feedbackSubmitBtn">Submit Feedback</button>
-                <div class="feedback-thanks" id="feedbackThanks">Thanks for the feedback — it helps us improve the diagnostic.</div>
+                <div class="feedback-thanks" id="feedbackThanks">Thanks for the feedback â it helps us improve the diagnostic.</div>
             </div>
 
             <div class="cta-bottom actions-preview" id="ctaBottom">
@@ -665,5 +665,213 @@
             </div>
         </div>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/lib/constraintLogic.js"></script>
+    <script>
+        // Supabase init
+        const SUPABASE_URL = 'https://raqwjzcdcfrwwnewwdke.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcXdqemNkY2Zyd3duZXd3ZGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5ODQ1MzAsImV4cCI6MjA4NjU2MDUzMH0.WEAZ1Kvp4wwQBL1wRJSc0T43C87u79nruU6UqJZpDoE';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Check for diagnostic data
+        const stored = sessionStorage.getItem('scalyst_diagnostic');
+
+        if (!stored) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('noData').classList.add('visible');
+        } else {
+            const data = JSON.parse(stored);
+            runLoadingSequence(data);
+        }
+
+        function runLoadingSequence(data) {
+            // Start loading bar
+            requestAnimationFrame(function() {
+                document.getElementById('loadingBar').classList.add('active');
+            });
+
+            // Show loading steps progressively
+            setTimeout(function() { document.getElementById('step1').classList.add('visible'); }, 200);
+            setTimeout(function() { document.getElementById('step2').classList.add('visible'); }, 500);
+            setTimeout(function() { document.getElementById('step3').classList.add('visible'); }, 900);
+            setTimeout(function() { document.getElementById('step4').classList.add('visible'); }, 1200);
+
+            // After 1.5s, show result
+            setTimeout(function() {
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('constraintLabel').textContent = data.constraint;
+                document.getElementById('resultState').classList.add('visible');
+            }, 1500);
+        }
+
+        // Email form submission
+        var emailForm = document.getElementById('emailForm');
+        emailForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            var emailInput = document.getElementById('emailInput');
+            var email = emailInput.value.trim();
+            var submitBtn = document.getElementById('emailSubmitBtn');
+            var errorEl = document.getElementById('emailError');
+
+            errorEl.classList.remove('visible');
+
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+
+            var data = JSON.parse(sessionStorage.getItem('scalyst_diagnostic'));
+
+            // Save to Supabase
+            supabaseClient
+                .from('diagnostics')
+                .insert([{
+                    email: email,
+                    monthly_revenue: data.raw.monthlyRevenue,
+                    cost_of_delivery: data.raw.costOfDelivery,
+                    fixed_expenses: data.raw.fixedExpenses,
+                    leads_per_month: data.raw.leadsPerMonth,
+                    deals_closed_per_month: data.raw.dealsClosedPerMonth,
+                    average_deal_value: data.raw.averageDealValue,
+                    max_capacity_per_month: data.raw.maxCapacityPerMonth,
+                    current_output_per_month: data.raw.currentOutputPerMonth,
+                    cash_on_hand: data.raw.cashOnHand,
+                    average_days_to_collect: data.raw.averageDaysToCollect,
+                    gross_margin: data.derived.grossMargin,
+                    net_profit: data.derived.netProfit,
+                    net_margin: data.derived.netMargin,
+                    conversion_rate: data.derived.conversionRate,
+                    capacity_utilization: data.derived.capacityUtilization,
+                    monthly_burn: data.derived.monthlyBurn,
+                    runway_months: data.derived.runwayMonths === Infinity ? 9999 : data.derived.runwayMonths,
+                    primary_constraint: data.constraint
+                }])
+                .select('id')
+                .then(function(response) {
+                    if (response.error) {
+                        console.error('Supabase error:', response.error);
+                    } else if (response.data && response.data[0]) {
+                        window._diagnosticRowId = response.data[0].id;
+                    }
+                    // Reveal regardless â don't block UX on DB errors
+                    revealResults(data);
+                })
+                .catch(function(err) {
+                    console.error('Error saving:', err);
+                    revealResults(data);
+                });
+        });
+
+        function revealResults(data) {
+            // Hide email gate
+            document.getElementById('emailGate').classList.add('hidden');
+
+            // Unblur constraint
+            document.getElementById('constraintLabel').classList.add('revealed');
+
+            // Show action items
+            var actions = ACTION_PREVIEWS[data.constraint] || [];
+            var actionsHtml = '';
+            actions.forEach(function(action, i) {
+                actionsHtml += '<div class="action-item">' +
+                    '<span class="action-number">0' + (i + 1) + '</span>' +
+                    '<span class="action-text">' + action + '</span>' +
+                    '</div>';
+            });
+            document.getElementById('actionsList').innerHTML = actionsHtml;
+            document.getElementById('actionsPreview').classList.add('visible');
+            document.getElementById('ctaBottom').classList.add('visible');
+
+            // Show derived metrics
+            var d = data.derived;
+            var metrics = [
+                { name: 'Gross Margin', value: (d.grossMargin * 100).toFixed(1) + '%' },
+                { name: 'Net Margin', value: (d.netMargin * 100).toFixed(1) + '%' },
+                { name: 'Conversion Rate', value: (d.conversionRate * 100).toFixed(1) + '%' },
+                { name: 'Capacity Utilization', value: (d.capacityUtilization * 100).toFixed(1) + '%' },
+                { name: 'Monthly Burn', value: '$' + d.monthlyBurn.toLocaleString() },
+                { name: 'Runway', value: d.runwayMonths === Infinity ? '> 99 mo' : d.runwayMonths.toFixed(1) + ' mo' }
+            ];
+
+            var metricsHtml = '';
+            metrics.forEach(function(m) {
+                metricsHtml += '<div class="metric-item">' +
+                    '<div class="metric-name">' + m.name + '</div>' +
+                    '<div class="metric-value">' + m.value + '</div>' +
+                    '</div>';
+            });
+            document.getElementById('metricsGrid').innerHTML = metricsHtml;
+            document.getElementById('metricsSummary').classList.add('visible');
+
+            // Show feedback section
+            document.getElementById('feedbackSection').classList.add('visible');
+        }
+
+        // --- Feedback handling ---
+        var selectedRating = null;
+
+        document.getElementById('feedbackButtons').addEventListener('click', function(e) {
+            var btn = e.target.closest('.feedback-btn');
+            if (!btn) return;
+
+            // Deselect all, select this one
+            var allBtns = document.querySelectorAll('.feedback-btn');
+            allBtns.forEach(function(b) { b.classList.remove('selected'); });
+            btn.classList.add('selected');
+            selectedRating = btn.getAttribute('data-rating');
+
+            // Show comment field and submit button
+            document.getElementById('feedbackCommentWrap').classList.add('visible');
+            document.getElementById('feedbackSubmitBtn').classList.add('visible');
+        });
+
+        document.getElementById('feedbackSubmitBtn').addEventListener('click', function() {
+            if (!selectedRating) return;
+
+            var submitBtn = document.getElementById('feedbackSubmitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+
+            var comment = document.getElementById('feedbackComment').value.trim();
+            var rowId = window._diagnosticRowId;
+
+            if (!rowId) {
+                // Fallback: no row ID, show thanks anyway
+                showFeedbackThanks();
+                return;
+            }
+
+            supabaseClient
+                .from('diagnostics')
+                .update({
+                    accuracy_rating: selectedRating,
+                    accuracy_comment: comment || null
+                })
+                .eq('id', rowId)
+                .then(function(response) {
+                    if (response.error) {
+                        console.error('Feedback save error:', response.error);
+                    }
+                    showFeedbackThanks();
+                })
+                .catch(function(err) {
+                    console.error('Feedback error:', err);
+                    showFeedbackThanks();
+                });
+        });
+
+        function showFeedbackThanks() {
+            document.getElementById('feedbackButtons').style.display = 'none';
+            document.getElementById('feedbackCommentWrap').style.display = 'none';
+            document.getElementById('feedbackSubmitBtn').style.display = 'none';
+            document.querySelector('.feedback-heading').style.display = 'none';
+            document.getElementById('feedbackThanks').classList.add('visible');
+        }
+    </script>
 </body>
 </html>
