@@ -84,65 +84,18 @@
         }
 
         /* Loading state */
-        .loading-state {
-            text-align: center;
-            padding: 6rem 0;
-        }
-
-        .loading-state h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--near-black);
-            margin-bottom: 1.5rem;
-        }
-
-        .loading-bar-track {
-            width: 100%;
-            max-width: 320px;
-            height: 4px;
-            background: var(--neutral-200);
-            border-radius: 2px;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-
-        .loading-bar-fill {
-            height: 100%;
-            width: 0%;
-            background: var(--primary-accent);
-            border-radius: 2px;
-            transition: width 1.5s ease-in-out;
-        }
-
-        .loading-bar-fill.active {
-            width: 100%;
-        }
-
-        .loading-steps {
-            margin-top: 2rem;
-            font-family: var(--font-mono);
-            font-size: 0.8125rem;
-            color: var(--neutral-500);
-            letter-spacing: 0.02em;
-        }
-
-        .loading-step {
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            margin-bottom: 0.25rem;
-        }
-
+        .loading-state { text-align: center; padding: 6rem 0; }
+        .loading-state h2 { font-size: 1.5rem; font-weight: 600; color: var(--near-black); margin-bottom: 1.5rem; }
+        .loading-bar-track { width: 100%; max-width: 320px; height: 4px; background: var(--neutral-200); border-radius: 2px; margin: 0 auto; overflow: hidden; }
+        .loading-bar-fill { height: 100%; width: 0%; background: var(--primary-accent); border-radius: 2px; transition: width 1.5s ease-in-out; }
+        .loading-bar-fill.active { width: 100%; }
+        .loading-steps { margin-top: 2rem; font-family: var(--font-mono); font-size: 0.8125rem; color: var(--neutral-500); letter-spacing: 0.02em; }
+        .loading-step { opacity: 0; transition: opacity 0.3s ease; margin-bottom: 0.25rem; }
         .loading-step.visible { opacity: 1; }
 
         /* Result state */
-        .result-state {
-            display: none;
-        }
-
-        .result-state.visible {
-            display: block;
-            animation: fadeIn 0.6s ease-out;
-        }
+        .result-state { display: none; }
+        .result-state.visible { display: block; animation: fadeIn 0.6s ease-out; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -173,7 +126,7 @@
             letter-spacing: -0.025em;
         }
 
-        /* Blurred constraint card */
+        /* Constraint card */
         .constraint-card {
             background: var(--neutral-100);
             border: 1.5px solid var(--neutral-200);
@@ -203,379 +156,209 @@
             transition: filter 0.6s ease;
         }
 
-        .constraint-value.revealed {
-            filter: blur(0);
-        }
+        .constraint-value.revealed { filter: blur(0); }
 
-        /* Email capture */
-        .email-gate {
-            margin-bottom: 2.5rem;
-        }
+        /* Email gate */
+        .email-gate { margin-bottom: 2.5rem; }
+        .email-gate.hidden { display: none; }
+        .email-gate p { font-size: 1rem; color: var(--neutral-700); margin-bottom: 1.25rem; line-height: 1.6; }
 
-        .email-gate.hidden {
-            display: none;
-        }
-
-        .email-gate p {
-            font-size: 1rem;
-            color: var(--neutral-700);
-            margin-bottom: 1.25rem;
-            line-height: 1.6;
-        }
-
-        .email-capture-form {
-            display: flex;
-            gap: 0.75rem;
-        }
-
+        .email-capture-form { display: flex; gap: 0.75rem; }
         .email-capture-form input {
-            flex: 1;
-            padding: 0.875rem 1rem;
-            border: 1.5px solid var(--neutral-200);
-            border-radius: 6px;
-            font-size: 1rem;
-            font-family: var(--font-mono);
-            color: var(--neutral-900);
-            background: var(--white);
-            transition: border-color 0.2s ease;
+            flex: 1; padding: 0.875rem 1rem; border: 1.5px solid var(--neutral-200);
+            border-radius: 6px; font-size: 1rem; font-family: var(--font-mono);
+            color: var(--neutral-900); background: var(--white); transition: border-color 0.2s ease;
         }
-
-        .email-capture-form input:focus {
-            outline: none;
-            border-color: var(--primary-accent);
-            box-shadow: 0 0 0 3px rgba(61, 153, 16, 0.08);
-        }
-
-        .email-capture-form input::placeholder {
-            color: var(--neutral-500);
-        }
-
+        .email-capture-form input:focus { outline: none; border-color: var(--primary-accent); box-shadow: 0 0 0 3px rgba(61, 153, 16, 0.08); }
+        .email-capture-form input::placeholder { color: var(--neutral-500); }
         .email-capture-form button {
-            padding: 0.875rem 1.75rem;
-            background: var(--primary-accent);
-            color: var(--white);
-            border: none;
-            border-radius: 6px;
-            font-size: 0.9375rem;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: var(--font-display);
-            transition: all 0.3s ease;
-            white-space: nowrap;
+            padding: 0.875rem 1.75rem; background: var(--primary-accent); color: var(--white);
+            border: none; border-radius: 6px; font-size: 0.9375rem; font-weight: 600;
+            cursor: pointer; font-family: var(--font-display); transition: all 0.3s ease; white-space: nowrap;
         }
+        .email-capture-form button:hover { background: var(--darker-anchor); }
+        .email-capture-form button:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        .email-capture-form button:hover {
-            background: var(--darker-anchor);
-        }
-
-        .email-capture-form button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .email-error {
-            color: #D32F2F;
-            font-size: 0.8125rem;
-            margin-top: 0.5rem;
-            display: none;
-        }
-
+        .email-error { color: #D32F2F; font-size: 0.8125rem; margin-top: 0.5rem; display: none; }
         .email-error.visible { display: block; }
 
         /* Actions preview */
-        .actions-preview {
-            display: none;
-        }
-
-        .actions-preview.visible {
-            display: block;
-            animation: fadeIn 0.6s ease-out;
-        }
+        .actions-preview { display: none; }
+        .actions-preview.visible { display: block; animation: fadeIn 0.6s ease-out; }
 
         .actions-label {
-            font-family: var(--font-mono);
-            font-size: 0.6875rem;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--primary-accent);
-            margin-bottom: 1rem;
+            font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700;
+            letter-spacing: 0.18em; text-transform: uppercase; color: var(--primary-accent); margin-bottom: 1rem;
         }
 
-        .action-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--neutral-200);
-        }
-
+        .action-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 1rem 0; border-bottom: 1px solid var(--neutral-200); }
         .action-item:last-child { border-bottom: none; }
+        .action-number { font-family: var(--font-mono); font-size: 0.8125rem; font-weight: 700; color: var(--primary-accent); flex-shrink: 0; margin-top: 0.125rem; }
+        .action-text { font-size: 1rem; color: var(--neutral-700); line-height: 1.55; }
 
-        .action-number {
-            font-family: var(--font-mono);
-            font-size: 0.8125rem;
-            font-weight: 700;
-            color: var(--primary-accent);
-            flex-shrink: 0;
-            margin-top: 0.125rem;
-        }
+        /* Derived metrics */
+        .metrics-summary { display: none; margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid var(--neutral-200); }
+        .metrics-summary.visible { display: block; animation: fadeIn 0.6s ease-out 0.2s backwards; }
+        .metrics-label { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--neutral-500); margin-bottom: 1rem; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .metric-item { background: var(--neutral-100); padding: 1rem; border-radius: 6px; }
+        .metric-name { font-family: var(--font-mono); font-size: 0.75rem; color: var(--neutral-500); letter-spacing: 0.02em; margin-bottom: 0.25rem; }
+        .metric-value { font-family: var(--font-mono); font-size: 1.125rem; font-weight: 700; color: var(--near-black); }
 
-        .action-text {
-            font-size: 1rem;
-            color: var(--neutral-700);
-            line-height: 1.55;
-        }
-
-        /* Derived metrics summary */
-        .metrics-summary {
+        /* Timeline section */
+        .timeline-section {
             display: none;
             margin-top: 2.5rem;
             padding-top: 2rem;
             border-top: 2px solid var(--neutral-200);
         }
-
-        .metrics-summary.visible {
+        .timeline-section.visible {
             display: block;
-            animation: fadeIn 0.6s ease-out 0.2s backwards;
+            animation: fadeIn 0.6s ease-out 0.3s backwards;
         }
-
-        .metrics-label {
-            font-family: var(--font-mono);
-            font-size: 0.6875rem;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
+        .timeline-label {
+            font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700;
+            letter-spacing: 0.18em; text-transform: uppercase; color: var(--neutral-500); margin-bottom: 1rem;
+        }
+        .timeline-empty {
+            font-size: 0.9375rem;
             color: var(--neutral-500);
+            font-style: italic;
             margin-bottom: 1rem;
         }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+        .timeline-entries { display: flex; flex-direction: column; gap: 0; }
+        .timeline-entry {
+            display: flex;
+            align-items: stretch;
             gap: 1rem;
+            min-height: 60px;
         }
-
-        .metric-item {
-            background: var(--neutral-100);
-            padding: 1rem;
-            border-radius: 6px;
+        .timeline-track {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 20px;
+            flex-shrink: 0;
         }
-
-        .metric-name {
+        .timeline-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--neutral-200);
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+        .timeline-dot.current {
+            background: var(--primary-accent);
+            box-shadow: 0 0 0 3px rgba(61, 153, 16, 0.15);
+        }
+        .timeline-line {
+            width: 2px;
+            flex: 1;
+            background: var(--neutral-200);
+            margin-top: 4px;
+        }
+        .timeline-entry:last-child .timeline-line { display: none; }
+        .timeline-content { padding-bottom: 1.25rem; }
+        .timeline-date {
             font-family: var(--font-mono);
             font-size: 0.75rem;
             color: var(--neutral-500);
             letter-spacing: 0.02em;
-            margin-bottom: 0.25rem;
         }
-
-        .metric-value {
-            font-family: var(--font-mono);
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: var(--near-black);
-        }
-
-        .cta-bottom {
-            margin-top: 3rem;
-            text-align: center;
-        }
-
-        .cta-bottom a {
-            display: inline-block;
-            padding: 1rem 2.5rem;
-            background: var(--primary-accent);
-            color: var(--white);
-            text-decoration: none;
-            border-radius: 6px;
+        .timeline-constraint {
             font-size: 1rem;
             font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .cta-bottom a:hover {
-            background: var(--darker-anchor);
-            transform: translateY(-1px);
-        }
-
-        /* Feedback section */
-        .feedback-section {
-            display: none;
-            margin-top: 2.5rem;
-            padding-top: 2rem;
-            border-top: 2px solid var(--neutral-200);
-        }
-
-        .feedback-section.visible {
-            display: block;
-            animation: fadeIn 0.6s ease-out 0.3s backwards;
-        }
-
-        .feedback-label {
-            font-family: var(--font-mono);
-            font-size: 0.6875rem;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--neutral-500);
-            margin-bottom: 0.5rem;
-        }
-
-        .feedback-heading {
-            font-size: 1.25rem;
-            font-weight: 600;
             color: var(--near-black);
-            margin-bottom: 1.25rem;
         }
-
-        .feedback-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.625rem;
-            margin-bottom: 1.5rem;
+        .timeline-constraint .change-tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.125rem 0.5rem;
+            border-radius: 3px;
+            margin-left: 0.5rem;
+            display: inline-block;
         }
+        .change-tag.same { background: var(--neutral-100); color: var(--neutral-500); }
+        .change-tag.changed { background: rgba(61, 153, 16, 0.08); color: var(--primary-accent); }
 
-        .feedback-btn {
-            padding: 0.625rem 1.125rem;
+        .timeline-update-cta {
+            margin-top: 1.25rem;
+        }
+        .timeline-update-cta a {
+            display: inline-block;
+            padding: 0.625rem 1.25rem;
+            background: var(--white);
+            color: var(--near-black);
+            text-decoration: none;
             border: 1.5px solid var(--neutral-200);
             border-radius: 6px;
-            background: var(--white);
-            font-family: var(--font-display);
             font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--neutral-700);
-            cursor: pointer;
+            font-weight: 600;
             transition: all 0.2s ease;
         }
-
-        .feedback-btn:hover {
+        .timeline-update-cta a:hover {
             border-color: var(--primary-accent);
             color: var(--primary-accent);
         }
 
-        .feedback-btn.selected {
-            border-color: var(--primary-accent);
-            background: rgba(61, 153, 16, 0.06);
-            color: var(--primary-accent);
-            font-weight: 600;
+        .cta-bottom { margin-top: 3rem; text-align: center; }
+        .cta-bottom a {
+            display: inline-block; padding: 1rem 2.5rem; background: var(--primary-accent);
+            color: var(--white); text-decoration: none; border-radius: 6px;
+            font-size: 1rem; font-weight: 600; transition: all 0.3s ease;
         }
+        .cta-bottom a:hover { background: var(--darker-anchor); transform: translateY(-1px); }
 
-        .feedback-comment-wrap {
-            display: none;
-            margin-bottom: 1.25rem;
+        /* Feedback section */
+        .feedback-section { display: none; margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid var(--neutral-200); }
+        .feedback-section.visible { display: block; animation: fadeIn 0.6s ease-out 0.3s backwards; }
+        .feedback-label { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--neutral-500); margin-bottom: 0.5rem; }
+        .feedback-heading { font-size: 1.25rem; font-weight: 600; color: var(--near-black); margin-bottom: 1.25rem; }
+        .feedback-buttons { display: flex; flex-wrap: wrap; gap: 0.625rem; margin-bottom: 1.5rem; }
+        .feedback-btn {
+            padding: 0.625rem 1.125rem; border: 1.5px solid var(--neutral-200); border-radius: 6px;
+            background: var(--white); font-family: var(--font-display); font-size: 0.875rem;
+            font-weight: 500; color: var(--neutral-700); cursor: pointer; transition: all 0.2s ease;
         }
-
-        .feedback-comment-wrap.visible {
-            display: block;
-        }
-
-        .feedback-comment-label {
-            font-size: 0.875rem;
-            color: var(--neutral-500);
-            margin-bottom: 0.5rem;
-        }
-
+        .feedback-btn:hover { border-color: var(--primary-accent); color: var(--primary-accent); }
+        .feedback-btn.selected { border-color: var(--primary-accent); background: rgba(61, 153, 16, 0.06); color: var(--primary-accent); font-weight: 600; }
+        .feedback-comment-wrap { display: none; margin-bottom: 1.25rem; }
+        .feedback-comment-wrap.visible { display: block; }
+        .feedback-comment-label { font-size: 0.875rem; color: var(--neutral-500); margin-bottom: 0.5rem; }
         .feedback-comment-wrap textarea {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1.5px solid var(--neutral-200);
-            border-radius: 6px;
-            font-size: 0.9375rem;
-            font-family: var(--font-display);
-            color: var(--neutral-900);
-            background: var(--white);
-            resize: vertical;
-            min-height: 80px;
-            transition: border-color 0.2s ease;
+            width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--neutral-200); border-radius: 6px;
+            font-size: 0.9375rem; font-family: var(--font-display); color: var(--neutral-900);
+            background: var(--white); resize: vertical; min-height: 80px; transition: border-color 0.2s ease;
         }
-
-        .feedback-comment-wrap textarea:focus {
-            outline: none;
-            border-color: var(--primary-accent);
-            box-shadow: 0 0 0 3px rgba(61, 153, 16, 0.08);
-        }
-
-        .feedback-comment-wrap textarea::placeholder {
-            color: var(--neutral-500);
-        }
-
+        .feedback-comment-wrap textarea:focus { outline: none; border-color: var(--primary-accent); box-shadow: 0 0 0 3px rgba(61, 153, 16, 0.08); }
+        .feedback-comment-wrap textarea::placeholder { color: var(--neutral-500); }
         .feedback-submit {
-            display: none;
-            padding: 0.75rem 1.5rem;
-            background: var(--primary-accent);
-            color: var(--white);
-            border: none;
-            border-radius: 6px;
-            font-size: 0.9375rem;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: var(--font-display);
-            transition: all 0.3s ease;
+            display: none; padding: 0.75rem 1.5rem; background: var(--primary-accent); color: var(--white);
+            border: none; border-radius: 6px; font-size: 0.9375rem; font-weight: 600;
+            cursor: pointer; font-family: var(--font-display); transition: all 0.3s ease;
         }
-
         .feedback-submit.visible { display: inline-block; }
         .feedback-submit:hover { background: var(--darker-anchor); }
         .feedback-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        .feedback-thanks {
-            display: none;
-            padding: 1.25rem;
-            background: var(--neutral-100);
-            border-radius: 6px;
-            font-size: 0.9375rem;
-            color: var(--neutral-700);
-            line-height: 1.5;
-        }
-
+        .feedback-thanks { display: none; padding: 1.25rem; background: var(--neutral-100); border-radius: 6px; font-size: 0.9375rem; color: var(--neutral-700); line-height: 1.5; }
         .feedback-thanks.visible { display: block; }
 
-        @media (max-width: 640px) {
-            .feedback-buttons { flex-direction: column; }
-            .feedback-btn { text-align: center; }
-        }
-
         /* No data redirect */
-        .no-data {
-            text-align: center;
-            padding: 6rem 0;
-            display: none;
-        }
-
+        .no-data { text-align: center; padding: 6rem 0; display: none; }
         .no-data.visible { display: block; }
-
-        .no-data h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--near-black);
-            margin-bottom: 1rem;
-        }
-
-        .no-data p {
-            color: var(--neutral-700);
-            margin-bottom: 2rem;
-        }
-
-        .no-data a {
-            display: inline-block;
-            padding: 1rem 2.5rem;
-            background: var(--primary-accent);
-            color: var(--white);
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .no-data a:hover {
-            background: var(--darker-anchor);
-        }
+        .no-data h2 { font-size: 1.5rem; font-weight: 600; color: var(--near-black); margin-bottom: 1rem; }
+        .no-data p { color: var(--neutral-700); margin-bottom: 2rem; }
+        .no-data a { display: inline-block; padding: 1rem 2.5rem; background: var(--primary-accent); color: var(--white); text-decoration: none; border-radius: 6px; font-weight: 600; transition: all 0.3s ease; }
+        .no-data a:hover { background: var(--darker-anchor); }
 
         @media (max-width: 640px) {
             main { padding: 6rem 1.25rem 3rem; }
             .result-title { font-size: 1.5rem; }
             .email-capture-form { flex-direction: column; }
             .metrics-grid { grid-template-columns: 1fr; }
+            .feedback-buttons { flex-direction: column; }
+            .feedback-btn { text-align: center; }
         }
     </style>
     <script defer data-domain="scalyst.digital" src="https://plausible.io/js/script.tagged-events.js"></script>
@@ -642,6 +425,15 @@
                 <div class="metrics-grid" id="metricsGrid"></div>
             </div>
 
+            <!-- Timeline section (shown after reveal if history exists) -->
+            <div class="timeline-section" id="timelineSection">
+                <div class="timeline-label">Your Constraint History</div>
+                <div id="timelineContent"></div>
+                <div class="timeline-update-cta" id="timelineUpdateCta" style="display:none;">
+                    <a id="updateLink" href="/update/">Run Another Check-In</a>
+                </div>
+            </div>
+
             <!-- Feedback section (shown after reveal) -->
             <div class="feedback-section" id="feedbackSection">
                 <div class="feedback-label">Feedback</div>
@@ -670,34 +462,29 @@
     <script src="/lib/constraintLogic.js"></script>
     <script>
         // Supabase init
-        const SUPABASE_URL = 'https://raqwjzcdcfrwwnewwdke.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcXdqemNkY2Zyd3duZXd3ZGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5ODQ1MzAsImV4cCI6MjA4NjU2MDUzMH0.WEAZ1Kvp4wwQBL1wRJSc0T43C87u79nruU6UqJZpDoE';
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        var SUPABASE_URL = 'https://raqwjzcdcfrwwnewwdke.supabase.co';
+        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcXdqemNkY2Zyd3duZXd3ZGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5ODQ1MzAsImV4cCI6MjA4NjU2MDUzMH0.WEAZ1Kvp4wwQBL1wRJSc0T43C87u79nruU6UqJZpDoE';
+        var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Check for diagnostic data
-        const stored = sessionStorage.getItem('scalyst_diagnostic');
+        var stored = sessionStorage.getItem('scalyst_diagnostic');
 
         if (!stored) {
             document.getElementById('loadingState').style.display = 'none';
             document.getElementById('noData').classList.add('visible');
         } else {
-            const data = JSON.parse(stored);
+            var data = JSON.parse(stored);
             runLoadingSequence(data);
         }
 
         function runLoadingSequence(data) {
-            // Start loading bar
             requestAnimationFrame(function() {
                 document.getElementById('loadingBar').classList.add('active');
             });
-
-            // Show loading steps progressively
             setTimeout(function() { document.getElementById('step1').classList.add('visible'); }, 200);
             setTimeout(function() { document.getElementById('step2').classList.add('visible'); }, 500);
             setTimeout(function() { document.getElementById('step3').classList.add('visible'); }, 900);
             setTimeout(function() { document.getElementById('step4').classList.add('visible'); }, 1200);
-
-            // After 1.5s, show result
             setTimeout(function() {
                 document.getElementById('loadingState').style.display = 'none';
                 document.getElementById('constraintLabel').textContent = data.constraint;
@@ -709,12 +496,10 @@
         var emailForm = document.getElementById('emailForm');
         emailForm.addEventListener('submit', function(e) {
             e.preventDefault();
-
             var emailInput = document.getElementById('emailInput');
             var email = emailInput.value.trim();
             var submitBtn = document.getElementById('emailSubmitBtn');
             var errorEl = document.getElementById('emailError');
-
             errorEl.classList.remove('visible');
 
             if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -727,50 +512,106 @@
 
             var data = JSON.parse(sessionStorage.getItem('scalyst_diagnostic'));
 
-            // Save to Supabase
-            supabaseClient
-                .from('diagnostics')
-                .insert([{
-                    email: email,
-                    monthly_revenue: data.raw.monthlyRevenue,
-                    cost_of_delivery: data.raw.costOfDelivery,
-                    fixed_expenses: data.raw.fixedExpenses,
-                    leads_per_month: data.raw.leadsPerMonth,
-                    deals_closed_per_month: data.raw.dealsClosedPerMonth,
-                    average_deal_value: data.raw.averageDealValue,
-                    max_capacity_per_month: data.raw.maxCapacityPerMonth,
-                    current_output_per_month: data.raw.currentOutputPerMonth,
-                    cash_on_hand: data.raw.cashOnHand,
-                    average_days_to_collect: data.raw.averageDaysToCollect,
-                    gross_margin: data.derived.grossMargin,
-                    net_profit: data.derived.netProfit,
-                    net_margin: data.derived.netMargin,
-                    conversion_rate: data.derived.conversionRate,
-                    capacity_utilization: data.derived.capacityUtilization,
-                    monthly_burn: data.derived.monthlyBurn,
-                    runway_months: data.derived.runwayMonths === Infinity ? 9999 : data.derived.runwayMonths,
-                    primary_constraint: data.constraint
-                }])
+            // 1. Upsert business profile
+            sb.from('business_profiles')
+                .upsert({ email: email }, { onConflict: 'email' })
                 .select('id')
-                .then(function(response) {
-                    if (response.error) {
-                        console.error('Supabase error:', response.error);
-                    } else if (response.data && response.data[0]) {
-                        window._diagnosticRowId = response.data[0].id;
+                .then(function(res) {
+                    if (res.error) {
+                        console.error('Profile upsert error:', res.error);
+                        // Try to fetch existing profile
+                        return sb.from('business_profiles')
+                            .select('id')
+                            .eq('email', email)
+                            .single();
                     }
-                    // Reveal regardless &mdash; don't block UX on DB errors
-                    revealResults(data);
+                    return res;
+                })
+                .then(function(res) {
+                    if (res.error || !res.data) {
+                        console.error('Profile lookup error:', res.error);
+                        revealResults(data, null, email);
+                        return;
+                    }
+
+                    var profileId = res.data.id || (Array.isArray(res.data) ? res.data[0].id : null);
+                    if (!profileId) {
+                        revealResults(data, null, email);
+                        return;
+                    }
+
+                    // Store for later use
+                    window._businessProfileId = profileId;
+                    window._userEmail = email;
+
+                    // 2. Insert constraint snapshot
+                    return sb.from('constraint_snapshots')
+                        .insert([{
+                            business_id: profileId,
+                            monthly_revenue: data.raw.monthlyRevenue,
+                            cost_of_delivery: data.raw.costOfDelivery,
+                            fixed_expenses: data.raw.fixedExpenses,
+                            leads_per_month: data.raw.leadsPerMonth,
+                            deals_closed_per_month: data.raw.dealsClosedPerMonth,
+                            average_deal_value: data.raw.averageDealValue,
+                            max_capacity_per_month: data.raw.maxCapacityPerMonth,
+                            current_output_per_month: data.raw.currentOutputPerMonth,
+                            cash_on_hand: data.raw.cashOnHand,
+                            average_days_to_collect: data.raw.averageDaysToCollect,
+                            gross_margin: data.derived.grossMargin,
+                            net_profit: data.derived.netProfit,
+                            net_margin: data.derived.netMargin,
+                            conversion_rate: data.derived.conversionRate,
+                            capacity_utilization: data.derived.capacityUtilization,
+                            monthly_burn: data.derived.monthlyBurn,
+                            runway_months: data.derived.runwayMonths === Infinity ? 9999 : data.derived.runwayMonths,
+                            primary_constraint: data.constraint
+                        }])
+                        .select('id')
+                        .then(function(snapRes) {
+                            if (snapRes.error) {
+                                console.error('Snapshot insert error:', snapRes.error);
+                            } else if (snapRes.data && snapRes.data[0]) {
+                                window._snapshotId = snapRes.data[0].id;
+                            }
+
+                            // Also save to legacy diagnostics table for backward compat
+                            sb.from('diagnostics')
+                                .insert([{
+                                    email: email,
+                                    monthly_revenue: data.raw.monthlyRevenue,
+                                    cost_of_delivery: data.raw.costOfDelivery,
+                                    fixed_expenses: data.raw.fixedExpenses,
+                                    leads_per_month: data.raw.leadsPerMonth,
+                                    deals_closed_per_month: data.raw.dealsClosedPerMonth,
+                                    average_deal_value: data.raw.averageDealValue,
+                                    max_capacity_per_month: data.raw.maxCapacityPerMonth,
+                                    current_output_per_month: data.raw.currentOutputPerMonth,
+                                    cash_on_hand: data.raw.cashOnHand,
+                                    average_days_to_collect: data.raw.averageDaysToCollect,
+                                    gross_margin: data.derived.grossMargin,
+                                    net_profit: data.derived.netProfit,
+                                    net_margin: data.derived.netMargin,
+                                    conversion_rate: data.derived.conversionRate,
+                                    capacity_utilization: data.derived.capacityUtilization,
+                                    monthly_burn: data.derived.monthlyBurn,
+                                    runway_months: data.derived.runwayMonths === Infinity ? 9999 : data.derived.runwayMonths,
+                                    primary_constraint: data.constraint
+                                }])
+                                .then(function() {});
+
+                            revealResults(data, profileId, email);
+                        });
                 })
                 .catch(function(err) {
-                    console.error('Error saving:', err);
-                    revealResults(data);
+                    console.error('Error:', err);
+                    revealResults(data, null, null);
                 });
         });
 
-        function revealResults(data) {
+        function revealResults(data, profileId, email) {
             // Hide email gate
             document.getElementById('emailGate').classList.add('hidden');
-
             // Unblur constraint
             document.getElementById('constraintLabel').classList.add('revealed');
 
@@ -810,6 +651,65 @@
 
             // Show feedback section
             document.getElementById('feedbackSection').classList.add('visible');
+
+            // Load timeline if we have a profile
+            if (profileId) {
+                loadTimeline(profileId, email);
+            }
+        }
+
+        function loadTimeline(profileId, email) {
+            sb.from('constraint_snapshots')
+                .select('id, primary_constraint, created_at')
+                .eq('business_id', profileId)
+                .order('created_at', { ascending: true })
+                .then(function(res) {
+                    if (res.error || !res.data || res.data.length === 0) return;
+
+                    var snapshots = res.data;
+                    var container = document.getElementById('timelineContent');
+                    var html = '<div class="timeline-entries">';
+
+                    snapshots.forEach(function(snap, i) {
+                        var date = new Date(snap.created_at);
+                        var dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                        var isCurrent = (i === snapshots.length - 1);
+                        var prevConstraint = i > 0 ? snapshots[i - 1].primary_constraint : null;
+                        var changed = prevConstraint && prevConstraint !== snap.primary_constraint;
+
+                        var tag = '';
+                        if (i > 0) {
+                            if (changed) {
+                                tag = '<span class="change-tag changed">Shifted</span>';
+                            } else {
+                                tag = '<span class="change-tag same">Same</span>';
+                            }
+                        }
+
+                        html += '<div class="timeline-entry">' +
+                            '<div class="timeline-track">' +
+                            '<div class="timeline-dot' + (isCurrent ? ' current' : '') + '"></div>' +
+                            '<div class="timeline-line"></div>' +
+                            '</div>' +
+                            '<div class="timeline-content">' +
+                            '<div class="timeline-date">' + dateStr + '</div>' +
+                            '<div class="timeline-constraint">' + snap.primary_constraint + tag + '</div>' +
+                            '</div>' +
+                            '</div>';
+                    });
+
+                    html += '</div>';
+                    container.innerHTML = html;
+
+                    // Show update CTA with email pre-filled
+                    if (email) {
+                        var updateLink = document.getElementById('updateLink');
+                        updateLink.href = '/update/?email=' + encodeURIComponent(email);
+                        document.getElementById('timelineUpdateCta').style.display = 'block';
+                    }
+
+                    document.getElementById('timelineSection').classList.add('visible');
+                });
         }
 
         // --- Feedback handling ---
@@ -818,46 +718,36 @@
         document.getElementById('feedbackButtons').addEventListener('click', function(e) {
             var btn = e.target.closest('.feedback-btn');
             if (!btn) return;
-
-            // Deselect all, select this one
             var allBtns = document.querySelectorAll('.feedback-btn');
             allBtns.forEach(function(b) { b.classList.remove('selected'); });
             btn.classList.add('selected');
             selectedRating = btn.getAttribute('data-rating');
-
-            // Show comment field and submit button
             document.getElementById('feedbackCommentWrap').classList.add('visible');
             document.getElementById('feedbackSubmitBtn').classList.add('visible');
         });
 
         document.getElementById('feedbackSubmitBtn').addEventListener('click', function() {
             if (!selectedRating) return;
-
             var submitBtn = document.getElementById('feedbackSubmitBtn');
             submitBtn.disabled = true;
             submitBtn.textContent = 'Saving...';
-
             var comment = document.getElementById('feedbackComment').value.trim();
-            var rowId = window._diagnosticRowId;
+            var snapshotId = window._snapshotId;
 
-            if (!rowId) {
-                // Fallback: no row ID, show thanks anyway
+            if (!snapshotId) {
                 showFeedbackThanks();
                 return;
             }
 
-            supabaseClient
-                .from('diagnostics')
+            sb.from('constraint_snapshots')
                 .update({
                     accuracy_rating: selectedRating,
                     accuracy_comment: comment || null,
                     feedback_submitted_at: new Date().toISOString()
                 })
-                .eq('id', rowId)
+                .eq('id', snapshotId)
                 .then(function(response) {
-                    if (response.error) {
-                        console.error('Feedback save error:', response.error);
-                    }
+                    if (response.error) console.error('Feedback save error:', response.error);
                     showFeedbackThanks();
                 })
                 .catch(function(err) {
