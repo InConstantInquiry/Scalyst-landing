@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scalyst â Diagnostic Results</title>
+    <title>Scalyst &mdash; Diagnostic Results</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600;700&family=DM+Serif+Display:wght@400&display=swap" rel="stylesheet">
@@ -617,7 +617,7 @@
 
             <div class="constraint-card">
                 <div class="constraint-card-label">Your Primary Growth Constraint</div>
-                <div class="constraint-value" id="constraintLabel">â</div>
+                <div class="constraint-value" id="constraintLabel">&mdash;</div>
             </div>
 
             <!-- Email gate -->
@@ -657,7 +657,7 @@
                     <textarea id="feedbackComment" placeholder="Share any thoughts..."></textarea>
                 </div>
                 <button class="feedback-submit" id="feedbackSubmitBtn">Submit Feedback</button>
-                <div class="feedback-thanks" id="feedbackThanks">Thanks for the feedback â it helps us improve the diagnostic.</div>
+                <div class="feedback-thanks" id="feedbackThanks">Thanks for the feedback &mdash; it helps us improve the diagnostic.</div>
             </div>
 
             <div class="cta-bottom actions-preview" id="ctaBottom">
@@ -758,7 +758,7 @@
                     } else if (response.data && response.data[0]) {
                         window._diagnosticRowId = response.data[0].id;
                     }
-                    // Reveal regardless â don't block UX on DB errors
+                    // Reveal regardless &mdash; don't block UX on DB errors
                     revealResults(data);
                 })
                 .catch(function(err) {
