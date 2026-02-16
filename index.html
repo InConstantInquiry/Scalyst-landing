@@ -975,17 +975,17 @@
             <div class="logo-container">
                 <span class="logo-text">Scalyst</span>
             </div>
-            <a href="#beta-cohort" class="nav-cta">Apply for Beta</a>
+            <a href="/diagnostic/" class="nav-cta">Start Diagnostic</a>
         </div>
     </header>
 
     <section class="hero">
         <div class="hero-content">
             <div class="framework-badge">Sequential Leverage Diagnostic™</div>
-            <h1>Stop optimizing the wrong constraint</h1>
-            <p class="hero-subheadline">Most service businesses plateau because they pull the wrong revenue lever first. Scalyst identifies your primary bottleneck and prescribes the correct sequence of action—eliminating wasted optimization cycles.</p>
-            <a href="#beta-cohort" class="cta-primary">Apply for Strategic Beta</a>
-            <p class="trust-line">Built for operators doing $5K–$20K/month</p>
+            <h1>Run Your Free Strategic Business Diagnostic</h1>
+            <p class="hero-subheadline">Identify your primary growth constraint in 10 minutes using structured decision logic. Scalyst pinpoints the bottleneck limiting your revenue and prescribes the correct sequence of action.</p>
+            <a href="/diagnostic/" class="cta-primary">Start Diagnostic</a>
+            <p class="trust-line">Built for service businesses doing $5K–$20K/month</p>
         </div>
     </section>
 
@@ -1236,33 +1236,16 @@ Projected Impact: Improving conversion to 12% would increase MRR by $6,720 witho
         </div>
     </section>
 
-    <section class="beta-section" id="beta-cohort">
-        <div class="container">
-            <div class="beta-content">
-                <h2>Join the Strategic Beta Cohort</h2>
-                <p class="beta-description">Scalyst launches in 4 weeks. We're assembling a founding cohort of 100 strategic operators to validate the diagnostic engine.</p>
-                <p class="beta-qualifier">This beta is qualification-based. Priority given to service businesses with clean metrics and commitment to implementation.</p>
-                <form class="email-form" onsubmit="handleSubmit(event)">
-                    <input type="email" class="email-input" placeholder="your@email.com" required>
-                    <button type="submit" class="cta-secondary">Apply Now</button>
-                </form>
-                <div class="beta-terms">
-                    <div class="beta-term">
-                        <div class="beta-term-value">100 Seats</div>
-                        <div class="beta-term-label">Strategic beta cohort</div>
-                    </div>
-                    <div class="beta-term">
-                        <div class="beta-term-value">50% Off</div>
-                        <div class="beta-term-label">Lifetime founding pricing</div>
-                    </div>
-                    <div class="beta-term">
-                        <div class="beta-term-value">4 Weeks</div>
-                        <div class="beta-term-label">Until public launch</div>
-                    </div>
+    <section class="beta-section" id="start-diagnostic">
+            <div class="container">
+                <div class="beta-content">
+                    <h2>Identify Your Primary Growth Constraint</h2>
+                    <p class="beta-description">Input your key business metrics. Receive a structured diagnostic that identifies the single constraint limiting your revenue—and the correct sequence to address it.</p>
+                    <p class="beta-qualifier">Takes approximately 10 minutes. No account required. Immediate results.</p>
+                    <a href="/diagnostic/" class="cta-secondary" style="display:inline-block;padding:1.25rem 2.5rem;text-decoration:none;">Start Diagnostic</a>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
     <section class="faq-section">
         <div class="section-divider"></div>
@@ -1301,8 +1284,8 @@ Projected Impact: Improving conversion to 12% would increase MRR by $6,720 witho
                     <p class="faq-answer">5 minutes to input your data. Immediate output with primary constraint identification, recommended action sequence, and projected impact.</p>
                 </div>
                 <div class="faq-item">
-                    <div class="faq-question">What does the beta cohort include?</div>
-                    <p class="faq-answer">Priority access to the diagnostic engine, lifetime pricing at 50% off public rates, direct feedback channel to the founding team, and early influence on framework evolution.</p>
+                    <div class="faq-question">What do I get from the diagnostic?</div>
+                    <p class="faq-answer">Your primary growth constraint identified from your actual metrics, a set of recommended first actions specific to that constraint, and derived performance metrics including margin, conversion rate, capacity utilization, and runway.</p>
                 </div>
             </div>
         </div>
@@ -1318,61 +1301,7 @@ Projected Impact: Improving conversion to 12% would increase MRR by $6,720 witho
             <p class="founder-note">Built by operators. Not theorists.</p>
         </div>
     </footer>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Initialize Supabase
-        const SUPABASE_URL = 'https://raqwjzcdcfrwwnewwdke.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcXdqemNkY2Zyd3duZXd3ZGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5ODQ1MzAsImV4cCI6MjA4NjU2MDUzMH0.WEAZ1Kvp4wwQBL1wRJSc0T43C87u79nruU6UqJZpDoE';
-        
-        const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // Extract UTM source from URL for attribution tracking
-        function getUtmSource() {
-            const params = new URLSearchParams(window.location.search);
-            return params.get('utm_source') || 'direct';
-        }
-
-        // Make handleSubmit global
-        window.handleSubmit = async function(event) {
-            event.preventDefault();
-            
-            const emailInput = event.target.querySelector('input[type="email"]');
-            const submitButton = event.target.querySelector('button[type="submit"]');
-            const email = emailInput.value.trim();
-            
-            submitButton.disabled = true;
-            submitButton.textContent = 'Submitting...';
-            
-            try {
-                const { error } = await client
-                    .from('waitlist')
-                    .insert([{
-                        email: email,
-                        source: getUtmSource(),
-                        status: 'pending'
-                    }]);
-                
-                if (error) {
-                    if (error.code === '23505') {
-                        window.location.href = '/thank-you.html';
-                        return;
-                    } else {
-                        console.error('Supabase error:', error);
-                        alert('Error: ' + error.message);
-                    }
-                } else {
-                    window.location.href = '/thank-you.html';
-                    return;
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('There was an error submitting your application. Please try again.');
-            } finally {
-                submitButton.disabled = false;
-                submitButton.textContent = 'Apply Now';
-            }
-        };
-
         // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -1383,9 +1312,6 @@ Projected Impact: Improving conversion to 12% would increase MRR by $6,720 witho
                 }
             });
         });
-    </script>
-</body>
-</html>
-
     
+</body>
 </html>
