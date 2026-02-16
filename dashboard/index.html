@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scalyst â Launch Analytics Dashboard</title>
+    <title>Scalyst — Launch Analytics Dashboard</title>
     <meta name="robots" content="noindex, nofollow">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <style>
-        :root {
+        :root 
             --primary-light: #CCFFD6;
             --secondary-light: #AFEFA7;
             --mid-accent: #91DE78;
@@ -40,7 +40,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ââ Password Gate ââ */
+        /* ── Password Gate ── */
         #auth-gate {
             position: fixed; inset: 0;
             background: var(--darker-anchor);
@@ -100,7 +100,7 @@
             display: none;
         }
 
-        /* ââ Dashboard Layout ââ */
+        /* ── Dashboard Layout ── */
         #dashboard { display: none; }
 
         .dash-header {
@@ -162,7 +162,7 @@
             padding: 2rem;
         }
 
-        /* ââ KPI Cards ââ */
+        /* ── KPI Cards ── */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -196,7 +196,7 @@
             margin-top: 0.25rem;
         }
 
-        /* ââ Chart Sections ââ */
+        /* ── Chart Sections ── */
         .chart-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -223,7 +223,7 @@
             height: 300px;
         }
 
-        /* ââ Table ââ */
+        /* ── Table ── */
         .table-card {
             background: var(--white);
             border-radius: 10px;
@@ -265,7 +265,7 @@
         }
         tr:hover td { background: var(--neutral-100); }
 
-        /* ââ Loading / Empty States ââ */
+        /* ── Loading / Empty States ── */
         .loading-spinner {
             display: flex;
             align-items: center;
@@ -289,7 +289,7 @@
         }
         .empty-state p { font-size: 0.9rem; margin-top: 0.5rem; }
 
-        /* ââ Responsive ââ */
+        /* ── Responsive ── */
         @media (max-width: 768px) {
             .chart-grid { grid-template-columns: 1fr; }
             .dash-header { flex-wrap: wrap; gap: 0.75rem; }
@@ -300,7 +300,7 @@
 </head>
 <body>
 
-<!-- âââââââââââ PASSWORD GATE âââââââââââ -->
+<!-- ═══════════ PASSWORD GATE ═══════════ -->
 <div id="auth-gate">
     <div class="auth-box">
         <h1>Scalyst Analytics</h1>
@@ -311,7 +311,7 @@
     </div>
 </div>
 
-<!-- âââââââââââ DASHBOARD âââââââââââ -->
+<!-- ═══════════ DASHBOARD ═══════════ -->
 <div id="dashboard">
 
     <!-- Header -->
@@ -339,27 +339,27 @@
         <div class="kpi-grid">
             <div class="kpi-card">
                 <div class="kpi-label">Unique Visitors</div>
-                <div class="kpi-value" id="kpi-visitors">â</div>
+                <div class="kpi-value" id="kpi-visitors">—</div>
                 <div class="kpi-sub" id="kpi-visitors-sub"></div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-label">Total Pageviews</div>
-                <div class="kpi-value" id="kpi-pageviews">â</div>
+                <div class="kpi-value" id="kpi-pageviews">—</div>
                 <div class="kpi-sub" id="kpi-pageviews-sub"></div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-label">Bounce Rate</div>
-                <div class="kpi-value" id="kpi-bounce">â</div>
+                <div class="kpi-value" id="kpi-bounce">—</div>
                 <div class="kpi-sub">% single-page sessions</div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-label">Avg Visit Duration</div>
-                <div class="kpi-value" id="kpi-duration">â</div>
+                <div class="kpi-value" id="kpi-duration">—</div>
                 <div class="kpi-sub">time on site</div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-label">Current Visitors</div>
-                <div class="kpi-value" id="kpi-realtime">â</div>
+                <div class="kpi-value" id="kpi-realtime">—</div>
                 <div class="kpi-sub">in last 5 minutes</div>
             </div>
         </div>
@@ -447,9 +447,9 @@
 </div>
 
 <script>
-// âââââââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════════
 //  CONFIG
-// âââââââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════════
 const API_URL = '/api/analytics';
 let AUTH_TOKEN = '';
 let charts = {};
@@ -462,9 +462,9 @@ const CHART_COLORS = [
     '#CCFFD6', '#2B6B15', '#4CAF50', '#81C784', '#A5D6A7'
 ];
 
-// âââââââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════════
 //  AUTHENTICATION
-// âââââââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════════
 document.getElementById('password-input').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') authenticate();
 });
@@ -494,7 +494,7 @@ async function authenticate() {
             return;
         }
 
-        // Success â store token and show dashboard
+        // Success — store token and show dashboard
         AUTH_TOKEN = pw;
         sessionStorage.setItem('scalyst_dash_token', pw);
         showDashboard();
@@ -523,9 +523,9 @@ function showDashboard() {
     }
 })();
 
-// âââââââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════════
 //  API HELPER
-// âââââââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════════
 async function query(params) {
     try {
         const res = await fetch(API_URL, {
@@ -559,11 +559,11 @@ function getDateRange() {
     return document.getElementById('date-range').value;
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════════
 //  FORMAT HELPERS
-// âââââââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════════
 function fmtNumber(n) {
-    if (n == null) return 'â';
+    if (n == null) return '—';
     return n.toLocaleString();
 }
 
@@ -576,19 +576,19 @@ function fmtDuration(seconds) {
 }
 
 function fmtBounce(rate) {
-    if (rate == null) return 'â';
+    if (rate == null) return '—';
     return Math.round(rate) + '%';
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════════
 //  INIT CHARTS
-// âââââââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════════
 function initCharts() {
     Chart.defaults.font.family = "'IBM Plex Sans', sans-serif";
     Chart.defaults.font.size = 12;
     Chart.defaults.color = '#737373';
 
-    // Timeseries â line chart
+    // Timeseries — line chart
     charts.timeseries = new Chart(document.getElementById('chart-timeseries'), {
         type: 'line',
         data: { labels: [], datasets: [] },
@@ -607,7 +607,7 @@ function initCharts() {
         },
     });
 
-    // Sources â horizontal bar
+    // Sources — horizontal bar
     charts.sources = new Chart(document.getElementById('chart-sources'), {
         type: 'bar',
         data: { labels: [], datasets: [] },
@@ -623,7 +623,7 @@ function initCharts() {
         },
     });
 
-    // Medium â doughnut
+    // Medium — doughnut
     charts.medium = new Chart(document.getElementById('chart-medium'), {
         type: 'doughnut',
         data: { labels: [], datasets: [] },
@@ -636,7 +636,7 @@ function initCharts() {
         },
     });
 
-    // Top Pages â horizontal bar
+    // Top Pages — horizontal bar
     charts.pages = new Chart(document.getElementById('chart-pages'), {
         type: 'bar',
         data: { labels: [], datasets: [] },
@@ -652,7 +652,7 @@ function initCharts() {
         },
     });
 
-    // Campaign â bar
+    // Campaign — bar
     charts.campaign = new Chart(document.getElementById('chart-campaign'), {
         type: 'bar',
         data: { labels: [], datasets: [] },
@@ -668,9 +668,9 @@ function initCharts() {
     });
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════════
 //  DATA FETCHING & RENDERING
-// âââââââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════════
 async function refreshAll() {
     const range = getDateRange();
     const ts = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -880,7 +880,7 @@ function renderContentTable(data) {
         const mets = row.metrics || [];
         html += '<tr>';
         html += '<td>' + (dims[0] || '(none)') + '</td>';
-        html += '<td>' + (dims[1] || 'â') + '</td>';
+        html += '<td>' + (dims[1] || '—') + '</td>';
         html += '<td>' + fmtNumber(mets[0]) + '</td>';
         html += '<td>' + fmtNumber(mets[1]) + '</td>';
         html += '<td>' + fmtBounce(mets[2]) + '</td>';
@@ -910,9 +910,9 @@ function renderReferrerTable(data) {
     tbody.innerHTML = html;
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════════
 //  TABLE SORTING
-// âââââââââââââââââââââââââââââââââââââââââââ
+// ═══════════════════════════════════════════
 let sortDir = {};
 function sortTable(colIdx) {
     const table = document.getElementById('content-table');
