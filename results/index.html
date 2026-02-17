@@ -126,7 +126,7 @@
             letter-spacing: -0.025em;
         }
 
-        /* Constraint card â NO blur */
+        /* Constraint card  NO blur */
         .constraint-card {
             background: var(--neutral-100);
             border: 1.5px solid var(--neutral-200);
@@ -153,7 +153,7 @@
             color: var(--near-black);
         }
 
-        /* ââ Action Plan Section ââ */
+        /*  Action Plan Section  */
         .action-plan-section {
             margin-bottom: 2.5rem;
             position: relative;
@@ -323,7 +323,7 @@
             transform: translateY(-1px);
         }
 
-        /* ââ Derived Metrics ââ */
+        /*  Derived Metrics  */
         .metrics-summary { margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid var(--neutral-200); }
         .metrics-label { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--neutral-500); margin-bottom: 1rem; }
         .metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
@@ -331,7 +331,7 @@
         .metric-name { font-family: var(--font-mono); font-size: 0.75rem; color: var(--neutral-500); letter-spacing: 0.02em; margin-bottom: 0.25rem; }
         .metric-value { font-family: var(--font-mono); font-size: 1.125rem; font-weight: 700; color: var(--near-black); }
 
-        /* ââ Why This Matters ââ */
+        /*  Why This Matters  */
         .why-section {
             margin-top: 2.5rem;
             padding-top: 2rem;
@@ -369,7 +369,7 @@
             margin-top: 0.125rem;
         }
 
-        /* ââ Feedback Section ââ */
+        /*  Feedback Section  */
         .feedback-section { margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid var(--neutral-200); }
         .feedback-label { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--neutral-500); margin-bottom: 0.5rem; }
         .feedback-heading { font-size: 1.25rem; font-weight: 600; color: var(--near-black); margin-bottom: 1.25rem; }
@@ -402,7 +402,7 @@
         .feedback-thanks { display: none; padding: 1.25rem; background: var(--neutral-100); border-radius: 6px; font-size: 0.9375rem; color: var(--neutral-700); line-height: 1.5; }
         .feedback-thanks.visible { display: block; }
 
-        /* ââ Bottom CTAs ââ */
+        /*  Bottom CTAs  */
         .cta-bottom {
             margin-top: 3rem;
             text-align: center;
@@ -436,7 +436,7 @@
         }
         .cta-secondary:hover { color: var(--primary-accent); }
 
-        /* ââ No data redirect ââ */
+        /*  No data redirect  */
         .no-data { text-align: center; padding: 6rem 0; display: none; }
         .no-data.visible { display: block; }
         .no-data h2 { font-size: 1.5rem; font-weight: 600; color: var(--near-black); margin-bottom: 1rem; }
@@ -490,13 +490,13 @@
             <div class="result-badge">Diagnostic Complete</div>
             <h1 class="result-title">Primary Constraint Identified</h1>
 
-            <!-- Constraint card â visible immediately, no blur -->
+            <!-- Constraint card  visible immediately, no blur -->
             <div class="constraint-card">
                 <div class="constraint-card-label">Your Primary Growth Constraint</div>
                 <div class="constraint-value" id="constraintLabel">&mdash;</div>
             </div>
 
-            <!-- Recommended Action Plan â expandable, details blurred -->
+            <!-- Recommended Action Plan  expandable, details blurred -->
             <div class="action-plan-section" id="actionPlanSection">
                 <div class="actions-label">Recommended Action Plan</div>
                 <div id="actionCards"></div>
@@ -575,7 +575,7 @@
         }
 
         function showResults(data) {
-            // Show constraint immediately â no blur
+            // Show constraint immediately  no blur
             document.getElementById('constraintLabel').textContent = data.constraint;
             document.getElementById('resultState').classList.add('visible');
 
@@ -667,7 +667,7 @@
 
                 whyHtml = '<p>Your gross margin is ' + (currentMargin * 100).toFixed(1) + '%. ' +
                     'Moving it to ' + (targetMargin * 100).toFixed(0) + '% adds $' +
-                    Math.round(projectedGain).toLocaleString() + '/mo in retained profit â without closing a single new deal.</p>';
+                    Math.round(projectedGain).toLocaleString() + '/mo in retained profit  without closing a single new deal.</p>';
 
             } else if (constraint === 'Capacity') {
                 var maxCap = Number(raw.maxCapacityPerMonth) || 1;
@@ -687,7 +687,7 @@
 
                 whyHtml = '<p>You\'re collecting in ' + daysToCollect + ' days. ' +
                     'Cutting to ' + targetDays + ' days frees up $' +
-                    Math.round(projectedGain).toLocaleString() + ' in working capital â money you already earned, available sooner.</p>';
+                    Math.round(projectedGain).toLocaleString() + ' in working capital  money you already earned, available sooner.</p>';
 
             } else {
                 // Lead Volume
@@ -699,7 +699,7 @@
                 whyHtml = '<p>You\'re generating ' + currentLeads + ' leads/mo. ' +
                     'Scaling to ' + targetLeads + ' at your current ' + (conversionRate * 100).toFixed(0) + '% close rate adds ' +
                     additionalDealsLV + ' deal' + (additionalDealsLV !== 1 ? 's' : '') +
-                    '/mo â $' + Math.round(projectedGain).toLocaleString() + ' in new revenue.</p>';
+                    '/mo  $' + Math.round(projectedGain).toLocaleString() + ' in new revenue.</p>';
             }
 
             if (projectedGain > 0) {
@@ -728,7 +728,7 @@
 
         document.getElementById('feedbackSubmitBtn').addEventListener('click', function() {
             if (!selectedRating) return;
-            // No Supabase save for anonymous users â just show thanks
+            // No Supabase save for anonymous users  just show thanks
             showFeedbackThanks();
         });
 
