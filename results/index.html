@@ -126,7 +126,7 @@
             letter-spacing: -0.025em;
         }
 
-        /* Constraint card */
+        /* Constraint card â NO blur */
         .constraint-card {
             background: var(--neutral-100);
             border: 1.5px solid var(--neutral-200);
@@ -151,168 +151,226 @@
             font-size: 1.75rem;
             font-weight: 700;
             color: var(--near-black);
-            filter: blur(12px);
-            user-select: none;
-            transition: filter 0.6s ease;
         }
 
-        .constraint-value.revealed { filter: blur(0); }
-
-        /* Email gate */
-        .email-gate { margin-bottom: 2.5rem; }
-        .email-gate.hidden { display: none; }
-        .email-gate p { font-size: 1rem; color: var(--neutral-700); margin-bottom: 1.25rem; line-height: 1.6; }
-
-        .email-capture-form { display: flex; gap: 0.75rem; }
-        .email-capture-form input {
-            flex: 1; padding: 0.875rem 1rem; border: 1.5px solid var(--neutral-200);
-            border-radius: 6px; font-size: 1rem; font-family: var(--font-mono);
-            color: var(--neutral-900); background: var(--white); transition: border-color 0.2s ease;
+        /* ââ Action Plan Section ââ */
+        .action-plan-section {
+            margin-bottom: 2.5rem;
+            position: relative;
         }
-        .email-capture-form input:focus { outline: none; border-color: var(--primary-accent); box-shadow: 0 0 0 3px rgba(61, 153, 16, 0.08); }
-        .email-capture-form input::placeholder { color: var(--neutral-500); }
-        .email-capture-form button {
-            padding: 0.875rem 1.75rem; background: var(--primary-accent); color: var(--white);
-            border: none; border-radius: 6px; font-size: 0.9375rem; font-weight: 600;
-            cursor: pointer; font-family: var(--font-display); transition: all 0.3s ease; white-space: nowrap;
-        }
-        .email-capture-form button:hover { background: var(--darker-anchor); }
-        .email-capture-form button:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        .email-error { color: #D32F2F; font-size: 0.8125rem; margin-top: 0.5rem; display: none; }
-        .email-error.visible { display: block; }
-
-        /* Actions preview */
-        .actions-preview { display: none; }
-        .actions-preview.visible { display: block; animation: fadeIn 0.6s ease-out; }
 
         .actions-label {
             font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700;
             letter-spacing: 0.18em; text-transform: uppercase; color: var(--primary-accent); margin-bottom: 1rem;
         }
 
-        .action-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 1rem 0; border-bottom: 1px solid var(--neutral-200); }
-        .action-item:last-child { border-bottom: none; }
-        .action-number { font-family: var(--font-mono); font-size: 0.8125rem; font-weight: 700; color: var(--primary-accent); flex-shrink: 0; margin-top: 0.125rem; }
-        .action-text { font-size: 1rem; color: var(--neutral-700); line-height: 1.55; }
+        .action-card {
+            border: 1.5px solid var(--neutral-200);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+            background: var(--white);
+        }
 
-        /* Derived metrics */
-        .metrics-summary { display: none; margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid var(--neutral-200); }
-        .metrics-summary.visible { display: block; animation: fadeIn 0.6s ease-out 0.2s backwards; }
+        .action-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s ease;
+        }
+
+        .action-card-header:hover {
+            background: var(--neutral-100);
+        }
+
+        .action-number {
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            font-weight: 700;
+            color: var(--primary-accent);
+            flex-shrink: 0;
+        }
+
+        .action-summary {
+            flex: 1;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--near-black);
+            line-height: 1.4;
+        }
+
+        .action-chevron {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+            color: var(--neutral-500);
+        }
+
+        .action-card.expanded .action-chevron {
+            transform: rotate(180deg);
+        }
+
+        .action-detail {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .action-card.expanded .action-detail {
+            max-height: 500px;
+        }
+
+        .action-detail-inner {
+            padding: 0 1.25rem 1.25rem 3rem;
+        }
+
+        .action-step {
+            font-size: 0.875rem;
+            color: var(--neutral-700);
+            line-height: 1.55;
+            padding: 0.3rem 0;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .action-step::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.65rem;
+            width: 4px;
+            height: 4px;
+            background: var(--primary-accent);
+            border-radius: 50%;
+        }
+
+        .action-metric {
+            margin-top: 0.75rem;
+            padding: 0.625rem 0.875rem;
+            background: rgba(61, 153, 16, 0.04);
+            border-left: 3px solid var(--primary-accent);
+            border-radius: 0 4px 4px 0;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--dark-anchor);
+            letter-spacing: 0.01em;
+        }
+
+        /* Blur overlay for action details */
+        .action-blur-overlay {
+            position: relative;
+        }
+
+        .action-blur-overlay .action-detail-inner {
+            filter: blur(5px);
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .action-blur-overlay::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.85) 100%);
+            pointer-events: none;
+        }
+
+        /* Gate CTA overlay */
+        .gate-overlay {
+            position: relative;
+            margin-top: -1rem;
+            margin-bottom: 2.5rem;
+            text-align: center;
+            padding: 2rem 1.5rem;
+            background: var(--neutral-100);
+            border: 1.5px solid var(--neutral-200);
+            border-radius: 8px;
+        }
+
+        .gate-overlay p {
+            font-size: 0.9375rem;
+            color: var(--neutral-700);
+            line-height: 1.55;
+            max-width: 460px;
+            margin: 0 auto;
+        }
+
+        .gate-overlay .gate-cta {
+            display: inline-block;
+            margin-top: 1.25rem;
+            padding: 0.875rem 2rem;
+            background: var(--primary-accent);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-display);
+        }
+
+        .gate-overlay .gate-cta:hover {
+            background: var(--darker-anchor);
+            transform: translateY(-1px);
+        }
+
+        /* ââ Derived Metrics ââ */
+        .metrics-summary { margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid var(--neutral-200); }
         .metrics-label { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--neutral-500); margin-bottom: 1rem; }
         .metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
         .metric-item { background: var(--neutral-100); padding: 1rem; border-radius: 6px; }
         .metric-name { font-family: var(--font-mono); font-size: 0.75rem; color: var(--neutral-500); letter-spacing: 0.02em; margin-bottom: 0.25rem; }
         .metric-value { font-family: var(--font-mono); font-size: 1.125rem; font-weight: 700; color: var(--near-black); }
 
-        /* Timeline section */
-        .timeline-section {
-            display: none;
+        /* ââ Why This Matters ââ */
+        .why-section {
             margin-top: 2.5rem;
             padding-top: 2rem;
             border-top: 2px solid var(--neutral-200);
         }
-        .timeline-section.visible {
-            display: block;
-            animation: fadeIn 0.6s ease-out 0.3s backwards;
-        }
-        .timeline-label {
+        .why-label {
             font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700;
             letter-spacing: 0.18em; text-transform: uppercase; color: var(--neutral-500); margin-bottom: 1rem;
         }
-        .timeline-empty {
-            font-size: 0.9375rem;
-            color: var(--neutral-500);
-            font-style: italic;
-            margin-bottom: 1rem;
+        .why-content {
+            font-size: 1rem;
+            color: var(--neutral-700);
+            line-height: 1.65;
         }
-        .timeline-entries { display: flex; flex-direction: column; gap: 0; }
-        .timeline-entry {
-            display: flex;
-            align-items: stretch;
-            gap: 1rem;
-            min-height: 60px;
+        .why-highlight {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 1rem 1.25rem;
+            background: rgba(61, 153, 16, 0.04);
+            border: 1.5px solid rgba(61, 153, 16, 0.15);
+            border-radius: 8px;
+            width: 100%;
         }
-        .timeline-track {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 20px;
-            flex-shrink: 0;
+        .why-highlight-number {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-accent);
         }
-        .timeline-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--neutral-200);
-            flex-shrink: 0;
-            margin-top: 4px;
-        }
-        .timeline-dot.current {
-            background: var(--primary-accent);
-            box-shadow: 0 0 0 3px rgba(61, 153, 16, 0.15);
-        }
-        .timeline-line {
-            width: 2px;
-            flex: 1;
-            background: var(--neutral-200);
-            margin-top: 4px;
-        }
-        .timeline-entry:last-child .timeline-line { display: none; }
-        .timeline-content { padding-bottom: 1.25rem; }
-        .timeline-date {
+        .why-highlight-label {
             font-family: var(--font-mono);
             font-size: 0.75rem;
             color: var(--neutral-500);
             letter-spacing: 0.02em;
-        }
-        .timeline-constraint {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--near-black);
-        }
-        .timeline-constraint .change-tag {
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.125rem 0.5rem;
-            border-radius: 3px;
-            margin-left: 0.5rem;
-            display: inline-block;
-        }
-        .change-tag.same { background: var(--neutral-100); color: var(--neutral-500); }
-        .change-tag.changed { background: rgba(61, 153, 16, 0.08); color: var(--primary-accent); }
-
-        .timeline-update-cta {
-            margin-top: 1.25rem;
-        }
-        .timeline-update-cta a {
-            display: inline-block;
-            padding: 0.625rem 1.25rem;
-            background: var(--white);
-            color: var(--near-black);
-            text-decoration: none;
-            border: 1.5px solid var(--neutral-200);
-            border-radius: 6px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-        .timeline-update-cta a:hover {
-            border-color: var(--primary-accent);
-            color: var(--primary-accent);
+            margin-top: 0.125rem;
         }
 
-        .cta-bottom { margin-top: 3rem; text-align: center; }
-        .cta-bottom a {
-            display: inline-block; padding: 1rem 2.5rem; background: var(--primary-accent);
-            color: var(--white); text-decoration: none; border-radius: 6px;
-            font-size: 1rem; font-weight: 600; transition: all 0.3s ease;
-        }
-        .cta-bottom a:hover { background: var(--darker-anchor); transform: translateY(-1px); }
-
-        /* Feedback section */
-        .feedback-section { display: none; margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid var(--neutral-200); }
-        .feedback-section.visible { display: block; animation: fadeIn 0.6s ease-out 0.3s backwards; }
+        /* ââ Feedback Section ââ */
+        .feedback-section { margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid var(--neutral-200); }
         .feedback-label { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--neutral-500); margin-bottom: 0.5rem; }
         .feedback-heading { font-size: 1.25rem; font-weight: 600; color: var(--near-black); margin-bottom: 1.25rem; }
         .feedback-buttons { display: flex; flex-wrap: wrap; gap: 0.625rem; margin-bottom: 1.5rem; }
@@ -344,7 +402,41 @@
         .feedback-thanks { display: none; padding: 1.25rem; background: var(--neutral-100); border-radius: 6px; font-size: 0.9375rem; color: var(--neutral-700); line-height: 1.5; }
         .feedback-thanks.visible { display: block; }
 
-        /* No data redirect */
+        /* ââ Bottom CTAs ââ */
+        .cta-bottom {
+            margin-top: 3rem;
+            text-align: center;
+        }
+        .cta-primary {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: var(--primary-accent);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-display);
+        }
+        .cta-primary:hover { background: var(--darker-anchor); transform: translateY(-1px); }
+
+        .cta-secondary {
+            display: block;
+            margin-top: 0.875rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--neutral-500);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            letter-spacing: 0.02em;
+            transition: color 0.2s ease;
+        }
+        .cta-secondary:hover { color: var(--primary-accent); }
+
+        /* ââ No data redirect ââ */
         .no-data { text-align: center; padding: 6rem 0; display: none; }
         .no-data.visible { display: block; }
         .no-data h2 { font-size: 1.5rem; font-weight: 600; color: var(--near-black); margin-bottom: 1rem; }
@@ -355,10 +447,10 @@
         @media (max-width: 640px) {
             main { padding: 6rem 1.25rem 3rem; }
             .result-title { font-size: 1.5rem; }
-            .email-capture-form { flex-direction: column; }
             .metrics-grid { grid-template-columns: 1fr; }
             .feedback-buttons { flex-direction: column; }
             .feedback-btn { text-align: center; }
+            .action-detail-inner { padding-left: 1.25rem; }
         }
     </style>
     <script defer data-domain="scalyst.digital" src="https://plausible.io/js/script.tagged-events.js"></script>
@@ -367,7 +459,7 @@
     <header>
         <div class="header-content">
             <a href="/" class="logo-text">Scalyst</a>
-            <a href="/diagnostic/" class="nav-back">&larr; Retake Diagnostic</a>
+            <a href="/" class="nav-back">&larr; Back to Home</a>
         </div>
     </header>
 
@@ -398,43 +490,37 @@
             <div class="result-badge">Diagnostic Complete</div>
             <h1 class="result-title">Primary Constraint Identified</h1>
 
+            <!-- Constraint card â visible immediately, no blur -->
             <div class="constraint-card">
                 <div class="constraint-card-label">Your Primary Growth Constraint</div>
                 <div class="constraint-value" id="constraintLabel">&mdash;</div>
             </div>
 
-            <!-- Email gate -->
-            <div class="email-gate" id="emailGate">
-                <p>Enter your email to save this diagnostic and track your constraint over time.</p>
-                <form class="email-capture-form" id="emailForm">
-                    <input type="email" id="emailInput" placeholder="your@email.com" required>
-                    <button type="submit" id="emailSubmitBtn">Reveal Result</button>
-                </form>
-                <div class="email-error" id="emailError">Please enter a valid email address.</div>
+            <!-- Recommended Action Plan â expandable, details blurred -->
+            <div class="action-plan-section" id="actionPlanSection">
+                <div class="actions-label">Recommended Action Plan</div>
+                <div id="actionCards"></div>
             </div>
 
-            <!-- Actions (hidden until reveal) -->
-            <div class="actions-preview" id="actionsPreview">
-                <div class="actions-label">Recommended First Actions</div>
-                <div id="actionsList"></div>
+            <!-- Gate overlay CTA -->
+            <div class="gate-overlay" id="gateOverlay">
+                <p>Create your free account to unlock full implementation guidance and track progress.</p>
+                <a href="/auth/signup/" class="gate-cta plausible-event-name=ResultsCTA+Click">Create Free Account to Unlock</a>
             </div>
 
-            <!-- Derived metrics (hidden until reveal) -->
+            <!-- Derived metrics -->
             <div class="metrics-summary" id="metricsSummary">
                 <div class="metrics-label">Your Derived Metrics</div>
                 <div class="metrics-grid" id="metricsGrid"></div>
             </div>
 
-            <!-- Timeline section (shown after reveal if history exists) -->
-            <div class="timeline-section" id="timelineSection">
-                <div class="timeline-label">Your Constraint History</div>
-                <div id="timelineContent"></div>
-                <div class="timeline-update-cta" id="timelineUpdateCta" style="display:none;">
-                    <a id="updateLink" href="/update/">Run Another Check-In</a>
-                </div>
+            <!-- Why This Matters -->
+            <div class="why-section" id="whySection">
+                <div class="why-label">Why This Matters</div>
+                <div class="why-content" id="whyContent"></div>
             </div>
 
-            <!-- Feedback section (shown after reveal) -->
+            <!-- Feedback section -->
             <div class="feedback-section" id="feedbackSection">
                 <div class="feedback-label">Feedback</div>
                 <div class="feedback-heading">How accurate does this feel?</div>
@@ -452,8 +538,10 @@
                 <div class="feedback-thanks" id="feedbackThanks">Thanks for the feedback &mdash; it helps us improve the diagnostic.</div>
             </div>
 
-            <div class="cta-bottom actions-preview" id="ctaBottom">
-                <a href="/diagnostic/">Retake Diagnostic</a>
+            <!-- Bottom CTAs -->
+            <div class="cta-bottom">
+                <a href="/auth/signup/" class="cta-primary plausible-event-name=ResultsBottomCTA+Click">Create Free Account to Track Progress</a>
+                <a href="/diagnostic/" class="cta-secondary">Run Check-In Later</a>
             </div>
         </div>
     </main>
@@ -461,11 +549,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/lib/constraintLogic.js"></script>
     <script>
-        // Supabase init
-        var SUPABASE_URL = 'https://raqwjzcdcfrwwnewwdke.supabase.co';
-        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcXdqemNkY2Zyd3duZXd3ZGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5ODQ1MzAsImV4cCI6MjA4NjU2MDUzMH0.WEAZ1Kvp4wwQBL1wRJSc0T43C87u79nruU6UqJZpDoE';
-        var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         // Check for diagnostic data
         var stored = sessionStorage.getItem('scalyst_diagnostic');
 
@@ -487,146 +570,40 @@
             setTimeout(function() { document.getElementById('step4').classList.add('visible'); }, 1200);
             setTimeout(function() {
                 document.getElementById('loadingState').style.display = 'none';
-                document.getElementById('constraintLabel').textContent = data.constraint;
-                document.getElementById('resultState').classList.add('visible');
+                showResults(data);
             }, 1500);
         }
 
-        // Email form submission
-        var emailForm = document.getElementById('emailForm');
-        emailForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            var emailInput = document.getElementById('emailInput');
-            var email = emailInput.value.trim();
-            var submitBtn = document.getElementById('emailSubmitBtn');
-            var errorEl = document.getElementById('emailError');
-            errorEl.classList.remove('visible');
+        function showResults(data) {
+            // Show constraint immediately â no blur
+            document.getElementById('constraintLabel').textContent = data.constraint;
+            document.getElementById('resultState').classList.add('visible');
 
-            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                errorEl.classList.add('visible');
-                return;
-            }
+            // Build expandable action cards with blurred details
+            var details = ACTION_DETAILS[data.constraint] || [];
+            var cardsHtml = '';
 
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Saving...';
-
-            var data = JSON.parse(sessionStorage.getItem('scalyst_diagnostic'));
-
-            // 1. Upsert business profile
-            sb.from('business_profiles')
-                .upsert({ email: email }, { onConflict: 'email' })
-                .select('id')
-                .then(function(res) {
-                    if (res.error) {
-                        console.error('Profile upsert error:', res.error);
-                        // Try to fetch existing profile
-                        return sb.from('business_profiles')
-                            .select('id')
-                            .eq('email', email)
-                            .single();
-                    }
-                    return res;
-                })
-                .then(function(res) {
-                    if (res.error || !res.data) {
-                        console.error('Profile lookup error:', res.error);
-                        revealResults(data, null, email);
-                        return;
-                    }
-
-                    var profileId = res.data.id || (Array.isArray(res.data) ? res.data[0].id : null);
-                    if (!profileId) {
-                        revealResults(data, null, email);
-                        return;
-                    }
-
-                    // Store for later use
-                    window._businessProfileId = profileId;
-                    window._userEmail = email;
-
-                    // 2. Insert constraint snapshot
-                    return sb.from('constraint_snapshots')
-                        .insert([{
-                            business_id: profileId,
-                            monthly_revenue: data.raw.monthlyRevenue,
-                            cost_of_delivery: data.raw.costOfDelivery,
-                            fixed_expenses: data.raw.fixedExpenses,
-                            leads_per_month: data.raw.leadsPerMonth,
-                            deals_closed_per_month: data.raw.dealsClosedPerMonth,
-                            average_deal_value: data.raw.averageDealValue,
-                            max_capacity_per_month: data.raw.maxCapacityPerMonth,
-                            current_output_per_month: data.raw.currentOutputPerMonth,
-                            cash_on_hand: data.raw.cashOnHand,
-                            average_days_to_collect: data.raw.averageDaysToCollect,
-                            gross_margin: data.derived.grossMargin,
-                            net_profit: data.derived.netProfit,
-                            net_margin: data.derived.netMargin,
-                            conversion_rate: data.derived.conversionRate,
-                            capacity_utilization: data.derived.capacityUtilization,
-                            monthly_burn: data.derived.monthlyBurn,
-                            runway_months: data.derived.runwayMonths === Infinity ? 9999 : data.derived.runwayMonths,
-                            primary_constraint: data.constraint
-                        }])
-                        .select('id')
-                        .then(function(snapRes) {
-                            if (snapRes.error) {
-                                console.error('Snapshot insert error:', snapRes.error);
-                            } else if (snapRes.data && snapRes.data[0]) {
-                                window._snapshotId = snapRes.data[0].id;
-                            }
-
-                            // Also save to legacy diagnostics table for backward compat
-                            sb.from('diagnostics')
-                                .insert([{
-                                    email: email,
-                                    monthly_revenue: data.raw.monthlyRevenue,
-                                    cost_of_delivery: data.raw.costOfDelivery,
-                                    fixed_expenses: data.raw.fixedExpenses,
-                                    leads_per_month: data.raw.leadsPerMonth,
-                                    deals_closed_per_month: data.raw.dealsClosedPerMonth,
-                                    average_deal_value: data.raw.averageDealValue,
-                                    max_capacity_per_month: data.raw.maxCapacityPerMonth,
-                                    current_output_per_month: data.raw.currentOutputPerMonth,
-                                    cash_on_hand: data.raw.cashOnHand,
-                                    average_days_to_collect: data.raw.averageDaysToCollect,
-                                    gross_margin: data.derived.grossMargin,
-                                    net_profit: data.derived.netProfit,
-                                    net_margin: data.derived.netMargin,
-                                    conversion_rate: data.derived.conversionRate,
-                                    capacity_utilization: data.derived.capacityUtilization,
-                                    monthly_burn: data.derived.monthlyBurn,
-                                    runway_months: data.derived.runwayMonths === Infinity ? 9999 : data.derived.runwayMonths,
-                                    primary_constraint: data.constraint
-                                }])
-                                .then(function() {});
-
-                            revealResults(data, profileId, email);
-                        });
-                })
-                .catch(function(err) {
-                    console.error('Error:', err);
-                    revealResults(data, null, null);
-                });
-        });
-
-        function revealResults(data, profileId, email) {
-            // Hide email gate
-            document.getElementById('emailGate').classList.add('hidden');
-            // Unblur constraint
-            document.getElementById('constraintLabel').classList.add('revealed');
-
-            // Show action items
-            var actions = ACTION_PREVIEWS[data.constraint] || [];
-            var actionsHtml = '';
-            actions.forEach(function(action, i) {
-                actionsHtml += '<div class="action-item">' +
-                    '<span class="action-number">0' + (i + 1) + '</span>' +
-                    '<span class="action-text">' + action + '</span>' +
-                    '</div>';
+            details.forEach(function(action, i) {
+                cardsHtml += '<div class="action-card" data-index="' + i + '">' +
+                    '<div class="action-card-header" onclick="toggleAction(this)">' +
+                        '<span class="action-number">0' + (i + 1) + '</span>' +
+                        '<span class="action-summary">' + action.summary + '</span>' +
+                        '<span class="action-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>' +
+                    '</div>' +
+                    '<div class="action-detail">' +
+                        '<div class="action-blur-overlay">' +
+                            '<div class="action-detail-inner">' +
+                                action.steps.map(function(step) {
+                                    return '<div class="action-step">' + step + '</div>';
+                                }).join('') +
+                                '<div class="action-metric">' + action.metric + '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
             });
-            document.getElementById('actionsList').innerHTML = actionsHtml;
-            document.getElementById('actionsPreview').classList.add('visible');
-            document.getElementById('ctaBottom').classList.add('visible');
+
+            document.getElementById('actionCards').innerHTML = cardsHtml;
 
             // Show derived metrics
             var d = data.derived;
@@ -647,69 +624,92 @@
                     '</div>';
             });
             document.getElementById('metricsGrid').innerHTML = metricsHtml;
-            document.getElementById('metricsSummary').classList.add('visible');
 
-            // Show feedback section
-            document.getElementById('feedbackSection').classList.add('visible');
-
-            // Load timeline if we have a profile
-            if (profileId) {
-                loadTimeline(profileId, email);
-            }
+            // Build "Why This Matters" section
+            buildWhySection(data);
         }
 
-        function loadTimeline(profileId, email) {
-            sb.from('constraint_snapshots')
-                .select('id, primary_constraint, created_at')
-                .eq('business_id', profileId)
-                .order('created_at', { ascending: true })
-                .then(function(res) {
-                    if (res.error || !res.data || res.data.length === 0) return;
+        function toggleAction(headerEl) {
+            var card = headerEl.parentElement;
+            card.classList.toggle('expanded');
+        }
 
-                    var snapshots = res.data;
-                    var container = document.getElementById('timelineContent');
-                    var html = '<div class="timeline-entries">';
+        function buildWhySection(data) {
+            var d = data.derived;
+            var raw = data.raw;
+            var constraint = data.constraint;
 
-                    snapshots.forEach(function(snap, i) {
-                        var date = new Date(snap.created_at);
-                        var dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                        var isCurrent = (i === snapshots.length - 1);
-                        var prevConstraint = i > 0 ? snapshots[i - 1].primary_constraint : null;
-                        var changed = prevConstraint && prevConstraint !== snap.primary_constraint;
+            var monthlyRevenue = Number(raw.monthlyRevenue) || 0;
+            var conversionRate = d.conversionRate;
+            var grossMargin = d.grossMargin;
+            var capacityUtil = d.capacityUtilization;
+            var dealsPerMonth = Number(raw.dealsClosedPerMonth) || 0;
+            var avgDealValue = Number(raw.averageDealValue) || 0;
 
-                        var tag = '';
-                        if (i > 0) {
-                            if (changed) {
-                                tag = '<span class="change-tag changed">Shifted</span>';
-                            } else {
-                                tag = '<span class="change-tag same">Same</span>';
-                            }
-                        }
+            var whyHtml = '';
+            var projectedGain = 0;
 
-                        html += '<div class="timeline-entry">' +
-                            '<div class="timeline-track">' +
-                            '<div class="timeline-dot' + (isCurrent ? ' current' : '') + '"></div>' +
-                            '<div class="timeline-line"></div>' +
-                            '</div>' +
-                            '<div class="timeline-content">' +
-                            '<div class="timeline-date">' + dateStr + '</div>' +
-                            '<div class="timeline-constraint">' + snap.primary_constraint + tag + '</div>' +
-                            '</div>' +
-                            '</div>';
-                    });
+            if (constraint === 'Conversion') {
+                var currentRate = conversionRate;
+                var targetRate = Math.min(currentRate + 0.10, 0.35);
+                var additionalDeals = Math.round((targetRate - currentRate) * Number(raw.leadsPerMonth));
+                projectedGain = additionalDeals * avgDealValue;
 
-                    html += '</div>';
-                    container.innerHTML = html;
+                whyHtml = '<p>Your conversion rate is ' + (currentRate * 100).toFixed(1) + '%. ' +
+                    'If you improve it to ' + (targetRate * 100).toFixed(0) + '%, that\'s ' +
+                    additionalDeals + ' additional deal' + (additionalDeals !== 1 ? 's' : '') +
+                    ' per month at $' + avgDealValue.toLocaleString() + ' average value.</p>';
 
-                    // Show update CTA with email pre-filled
-                    if (email) {
-                        var updateLink = document.getElementById('updateLink');
-                        updateLink.href = '/update/?email=' + encodeURIComponent(email);
-                        document.getElementById('timelineUpdateCta').style.display = 'block';
-                    }
+            } else if (constraint === 'Margin') {
+                var currentMargin = grossMargin;
+                var targetMargin = Math.min(currentMargin + 0.10, 0.55);
+                projectedGain = monthlyRevenue * (targetMargin - currentMargin);
 
-                    document.getElementById('timelineSection').classList.add('visible');
-                });
+                whyHtml = '<p>Your gross margin is ' + (currentMargin * 100).toFixed(1) + '%. ' +
+                    'Moving it to ' + (targetMargin * 100).toFixed(0) + '% adds $' +
+                    Math.round(projectedGain).toLocaleString() + '/mo in retained profit â without closing a single new deal.</p>';
+
+            } else if (constraint === 'Capacity') {
+                var maxCap = Number(raw.maxCapacityPerMonth) || 1;
+                var currentOutput = Number(raw.currentOutputPerMonth) || 0;
+                var headroom = Math.round(maxCap * 0.20);
+                projectedGain = headroom * avgDealValue;
+
+                whyHtml = '<p>You\'re running at ' + (capacityUtil * 100).toFixed(0) + '% capacity. ' +
+                    'Freeing up ' + headroom + ' units/mo of throughput means $' +
+                    Math.round(projectedGain).toLocaleString() + '/mo in additional revenue capacity.</p>';
+
+            } else if (constraint === 'Cash Flow') {
+                var daysToCollect = Number(raw.averageDaysToCollect) || 0;
+                var targetDays = 30;
+                var daysSaved = Math.max(daysToCollect - targetDays, 0);
+                projectedGain = (monthlyRevenue / 30) * daysSaved;
+
+                whyHtml = '<p>You\'re collecting in ' + daysToCollect + ' days. ' +
+                    'Cutting to ' + targetDays + ' days frees up $' +
+                    Math.round(projectedGain).toLocaleString() + ' in working capital â money you already earned, available sooner.</p>';
+
+            } else {
+                // Lead Volume
+                var currentLeads = Number(raw.leadsPerMonth) || 0;
+                var targetLeads = Math.round(currentLeads * 1.5);
+                var additionalDealsLV = Math.round((targetLeads - currentLeads) * conversionRate);
+                projectedGain = additionalDealsLV * avgDealValue;
+
+                whyHtml = '<p>You\'re generating ' + currentLeads + ' leads/mo. ' +
+                    'Scaling to ' + targetLeads + ' at your current ' + (conversionRate * 100).toFixed(0) + '% close rate adds ' +
+                    additionalDealsLV + ' deal' + (additionalDealsLV !== 1 ? 's' : '') +
+                    '/mo â $' + Math.round(projectedGain).toLocaleString() + ' in new revenue.</p>';
+            }
+
+            if (projectedGain > 0) {
+                whyHtml += '<div class="why-highlight">' +
+                    '<div class="why-highlight-number">+$' + Math.round(projectedGain).toLocaleString() + '/mo</div>' +
+                    '<div class="why-highlight-label">Projected monthly impact from resolving this constraint</div>' +
+                    '</div>';
+            }
+
+            document.getElementById('whyContent').innerHTML = whyHtml;
         }
 
         // --- Feedback handling ---
@@ -728,32 +728,8 @@
 
         document.getElementById('feedbackSubmitBtn').addEventListener('click', function() {
             if (!selectedRating) return;
-            var submitBtn = document.getElementById('feedbackSubmitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Saving...';
-            var comment = document.getElementById('feedbackComment').value.trim();
-            var snapshotId = window._snapshotId;
-
-            if (!snapshotId) {
-                showFeedbackThanks();
-                return;
-            }
-
-            sb.from('constraint_snapshots')
-                .update({
-                    accuracy_rating: selectedRating,
-                    accuracy_comment: comment || null,
-                    feedback_submitted_at: new Date().toISOString()
-                })
-                .eq('id', snapshotId)
-                .then(function(response) {
-                    if (response.error) console.error('Feedback save error:', response.error);
-                    showFeedbackThanks();
-                })
-                .catch(function(err) {
-                    console.error('Feedback error:', err);
-                    showFeedbackThanks();
-                });
+            // No Supabase save for anonymous users â just show thanks
+            showFeedbackThanks();
         });
 
         function showFeedbackThanks() {
