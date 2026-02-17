@@ -89,6 +89,7 @@
                 <div class="form-error" id="loginError"></div>
             </form>
             <form class="auth-form" id="signupForm">
+                <div class="field"><label for="signupName">Name</label><input type="text" id="signupName" placeholder="Your name" required></div>
                 <div class="field"><label for="signupEmail">Email</label><input type="email" id="signupEmail" placeholder="your@email.com" required></div>
                 <div class="field"><label for="signupPassword">Password</label><input type="password" id="signupPassword" placeholder="Create a password" required minlength="6"><div class="password-hint">Minimum 6 characters</div></div>
                 <div class="field"><label for="signupConfirmPassword">Confirm Password</label><input type="password" id="signupConfirmPassword" placeholder="Re-enter your password" required minlength="6"><div class="field-error" id="confirmPasswordError">Passwords do not match.</div></div>
@@ -188,7 +189,8 @@
         });
         document.getElementById('signupForm').addEventListener('submit',function(e){
             e.preventDefault();
-            var email=document.getElementById('signupEmail').value.trim();
+            var name=document.getElementById('signupName').value.trim();
+var email=document.getElementById('signupEmail').value.trim();
             var password=document.getElementById('signupPassword').value;
             var confirmPassword=document.getElementById('signupConfirmPassword').value;
             var btn=document.getElementById('signupBtn');
@@ -200,7 +202,7 @@
             if(password!==confirmPassword){confirmErrEl.classList.add('visible');confirmInput.classList.add('input-error');return;}
             confirmErrEl.classList.remove('visible');confirmInput.classList.remove('input-error');
             btn.disabled=true;btn.textContent='Creating account...';
-            sb.auth.signUp({email:email,password:password,options:{emailRedirectTo:window.location.origin+'/auth/?from='+(fromDiagnostic?'diagnostic':'confirm')}}).then(function(res){
+            sb.auth.signUp({email:email,password:password,options:{data:{full_name:name},emailRedirectTo:window.location.origin+'/auth/?from='+(fromDiagnostic?'diagnostic':'confirm')}}).then(function(res){
                 if(res.error){errEl.textContent=res.error.message;errEl.classList.add('visible');btn.disabled=false;btn.textContent='Create Account';return;}
                 if(res.data.user&&res.data.user.identities&&res.data.user.identities.length===0){errEl.textContent='An account with this email already exists. Please log in instead.';errEl.classList.add('visible');btn.disabled=false;btn.textContent='Create Account';return;}if(res.data.session){saveDiagnosticAndRedirect(res.data.user);}else{window.__lastSignupEmail=email;successEl.classList.add('visible');btn.disabled=false;btn.textContent='Create Account';}
             }).catch(function(err){errEl.textContent='Something went wrong. Please try again.';errEl.classList.add('visible');btn.disabled=false;btn.textContent='Create Account';});
