@@ -94,7 +94,7 @@
                 <div class="field"><label for="signupConfirmPassword">Confirm Password</label><input type="password" id="signupConfirmPassword" placeholder="Re-enter your password" required minlength="6"><div class="field-error" id="confirmPasswordError">Passwords do not match.</div></div>
                 <button type="submit" class="submit-btn" id="signupBtn">Create Account</button>
                 <div class="form-error" id="signupError"></div>
-                <div class="form-success" id="signupSuccess">Check your email for a confirmation link. Once confirmed, you can log in.</div>
+                <div class="form-success" id="signupSuccess">Check your email for a confirmation link. Once confirmed, you can log in.<br><br><a href="#" id="resendConfirmation" style="color:var(--primary-accent);font-weight:600;text-decoration:underline;font-size:0.875rem;">Resend confirmation email</a></div>
             </form>
         </div>
         <div id="forgotView" style="display:none;">
@@ -202,7 +202,7 @@
             btn.disabled=true;btn.textContent='Creating account...';
             sb.auth.signUp({email:email,password:password,options:{emailRedirectTo:window.location.origin+'/auth/?from='+(fromDiagnostic?'diagnostic':'confirm')}}).then(function(res){
                 if(res.error){errEl.textContent=res.error.message;errEl.classList.add('visible');btn.disabled=false;btn.textContent='Create Account';return;}
-                if(res.data.session){saveDiagnosticAndRedirect(res.data.user);}else{successEl.classList.add('visible');btn.disabled=false;btn.textContent='Create Account';}
+                if(res.data.user&&res.data.user.identities&&res.data.user.identities.length===0){errEl.textContent='An account with this email already exists. Please log in instead.';errEl.classList.add('visible');btn.disabled=false;btn.textContent='Create Account';return;}if(res.data.session){saveDiagnosticAndRedirect(res.data.user);}else{window.__lastSignupEmail=email;successEl.classList.add('visible');btn.disabled=false;btn.textContent='Create Account';}
             }).catch(function(err){errEl.textContent='Something went wrong. Please try again.';errEl.classList.add('visible');btn.disabled=false;btn.textContent='Create Account';});
         });
         document.getElementById('forgotForm').addEventListener('submit',function(e){
@@ -241,7 +241,9 @@
             if(this.value&&this.value!==document.getElementById('resetPassword').value){e.classList.add('visible');this.classList.add('input-error');}
             else{e.classList.remove('visible');this.classList.remove('input-error');}
         });
-        function saveDiagnosticAndRedirect(user){
+        
+document.addEventListener('click',function(e){if(e.target&&e.target.id==='resendConfirmation'){e.preventDefault();var email=window.__lastSignupEmail||document.getElementById('signupEmail').value.trim();if(!email){return;}e.target.textContent='Sending...';e.target.style.pointerEvents='none';sb.auth.resend({type:'signup',email:email}).then(function(res){if(res.error){e.target.textContent='Failed to resend. Try again.';e.target.style.pointerEvents='auto';}else{e.target.textContent='Confirmation email resent!';setTimeout(function(){e.target.textContent='Resend confirmation email';e.target.style.pointerEvents='auto';},3000);}}).catch(function(){e.target.textContent='Failed to resend. Try again.';e.target.style.pointerEvents='auto';});}});
+function saveDiagnosticAndRedirect(user){
             var stored=sessionStorage.getItem('scalyst_diagnostic');
             if(!stored){window.location.href='/dashboard/';return;}
             var data=JSON.parse(stored);
