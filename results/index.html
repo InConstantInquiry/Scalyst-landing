@@ -452,6 +452,86 @@
             .feedback-btn { text-align: center; }
             .action-detail-inner { padding-left: 1.25rem; }
         }
+
+    .metric-name-clickable {
+      cursor: pointer;
+      border-bottom: 1px dotted var(--neutral-500);
+      display: inline-block;
+      transition: color 0.15s ease, border-color 0.15s ease;
+    }
+    .metric-name-clickable:hover {
+      color: var(--primary-accent);
+      border-color: var(--primary-accent);
+    }
+    .metric-popover-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+    }
+    .metric-popover {
+      position: absolute;
+      z-index: 1000;
+      background: var(--white);
+      border: 1.5px solid var(--neutral-200);
+      border-radius: 8px;
+      padding: 1.25rem;
+      width: 300px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+      animation: popoverIn 0.15s ease-out;
+    }
+    @keyframes popoverIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .metric-popover-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+    .metric-popover-title {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--near-black);
+    }
+    .metric-popover-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--neutral-500);
+      padding: 2px;
+      line-height: 1;
+      font-size: 1.125rem;
+    }
+    .metric-popover-close:hover {
+      color: var(--near-black);
+    }
+    .metric-popover-section {
+      margin-bottom: 0.75rem;
+    }
+    .metric-popover-section:last-child {
+      margin-bottom: 0;
+    }
+    .metric-popover-label {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--neutral-500);
+      margin-bottom: 0.25rem;
+    }
+    .metric-popover-text {
+      font-size: 0.8125rem;
+      color: var(--neutral-700);
+      line-height: 1.5;
+    }
+    .metric-popover-interpretation {
+      font-size: 0.8125rem;
+      color: var(--dark-anchor);
+      line-height: 1.5;
+      font-weight: 500;
+    }
     </style>
     <script defer data-domain="scalyst.digital" src="https://plausible.io/js/script.tagged-events.js"></script>
 </head>
@@ -608,12 +688,292 @@
             // Show derived metrics
             var d = data.derived;
             var metrics = [
-                { name: 'Gross Margin', value: (d.grossMargin * 100).toFixed(1) + '%' },
-                { name: 'Net Margin', value: (d.netMargin * 100).toFixed(1) + '%' },
-                { name: 'Conversion Rate', value: (d.conversionRate * 100).toFixed(1) + '%' },
-                { name: 'Capacity Utilization', value: (d.capacityUtilization * 100).toFixed(1) + '%' },
-                { name: 'Monthly Burn', value: '$' + d.monthlyBurn.toLocaleString() },
-                { name: 'Runway', value: d.runwayMonths === Infinity ? '> 99 mo' : d.runwayMonths.toFixed(1) + ' mo' }
+                { name: 'Gross Margin', key: 'grossMargin', raw: (d.grossMargin * 100).toFixed(1), value: (d.grossMargin * 100).toFixed(1) + '%' },
+                { name: 'Net Margin', key: 'netMargin', raw: (d.netMargin * 100).toFixed(1), value: (d.netMargin * 100).toFixed(1) + '%' },
+                { name: 'Conversion Rate', key: 'conversionRate', raw: (d.conversionRate * 100).toFixed(1), value: (d.conversionRate * 100).toFixed(1) + '%' },
+                { name: 'Capacity Utilization', key: 'capacityUtilization', raw: (d.capacityUtilization * 100).toFixed(1), value: (d.capacityUtilization * 100).toFixed(1) + '%' },
+                { name: 'Monthly Burn', key: 'monthlyBurn', raw: d.monthlyBurn, value: '
+
+            var metricsHtml = '';
+            metrics.forEach(function(m) {
+                metricsHtml += '<div class="metric-item">' +
+                    '<div class="metric-name">' + m.name + '</div>' +
+                    '<div class="metric-value">' + m.value + '</div>' +
+                    '</div>';
+            });
+            document.getElementById('metricsGrid').innerHTML = metricsHtml;
+
+            // Build "Why This Matters" section
+            buildWhySection(data);
+        }
+
+        function toggleAction(headerEl) {
+            var card = headerEl.parentElement;
+            card.classList.toggle('expanded');
+        }
+
+        function buildWhySection(data) {
+            var d = data.derived;
+            var raw = data.raw;
+            var constraint = data.constraint;
+
+            var monthlyRevenue = Number(raw.monthlyRevenue) || 0;
+            var conversionRate = d.conversionRate;
+            var grossMargin = d.grossMargin;
+            var capacityUtil = d.capacityUtilization;
+            var dealsPerMonth = Number(raw.dealsClosedPerMonth) || 0;
+            var avgDealValue = Number(raw.averageDealValue) || 0;
+
+            var whyHtml = '';
+            var projectedGain = 0;
+
+            if (constraint === 'Conversion') {
+                var currentRate = conversionRate;
+                var targetRate = Math.min(currentRate + 0.10, 0.35);
+                var additionalDeals = Math.round((targetRate - currentRate) * Number(raw.leadsPerMonth));
+                projectedGain = additionalDeals * avgDealValue;
+
+                whyHtml = '<p>Your conversion rate is ' + (currentRate * 100).toFixed(1) + '%. ' +
+                    'If you improve it to ' + (targetRate * 100).toFixed(0) + '%, that\'s ' +
+                    additionalDeals + ' additional deal' + (additionalDeals !== 1 ? 's' : '') +
+                    ' per month at $' + avgDealValue.toLocaleString() + ' average value.</p>';
+
+            } else if (constraint === 'Margin') {
+                var currentMargin = grossMargin;
+                var targetMargin = Math.min(currentMargin + 0.10, 0.55);
+                projectedGain = monthlyRevenue * (targetMargin - currentMargin);
+
+                whyHtml = '<p>Your gross margin is ' + (currentMargin * 100).toFixed(1) + '%. ' +
+                    'Moving it to ' + (targetMargin * 100).toFixed(0) + '% adds $' +
+                    Math.round(projectedGain).toLocaleString() + '/mo in retained profit  without closing a single new deal.</p>';
+
+            } else if (constraint === 'Capacity') {
+                var maxCap = Number(raw.maxCapacityPerMonth) || 1;
+                var currentOutput = Number(raw.currentOutputPerMonth) || 0;
+                var headroom = Math.round(maxCap * 0.20);
+                projectedGain = headroom * avgDealValue;
+
+                whyHtml = '<p>You\'re running at ' + (capacityUtil * 100).toFixed(0) + '% capacity. ' +
+                    'Freeing up ' + headroom + ' units/mo of throughput means $' +
+                    Math.round(projectedGain).toLocaleString() + '/mo in additional revenue capacity.</p>';
+
+            } else if (constraint === 'Cash Flow') {
+                var daysToCollect = Number(raw.averageDaysToCollect) || 0;
+                var targetDays = 30;
+                var daysSaved = Math.max(daysToCollect - targetDays, 0);
+                projectedGain = (monthlyRevenue / 30) * daysSaved;
+
+                whyHtml = '<p>You\'re collecting in ' + daysToCollect + ' days. ' +
+                    'Cutting to ' + targetDays + ' days frees up $' +
+                    Math.round(projectedGain).toLocaleString() + ' in working capital  money you already earned, available sooner.</p>';
+
+            } else {
+                // Lead Volume
+                var currentLeads = Number(raw.leadsPerMonth) || 0;
+                var targetLeads = Math.round(currentLeads * 1.5);
+                var additionalDealsLV = Math.round((targetLeads - currentLeads) * conversionRate);
+                projectedGain = additionalDealsLV * avgDealValue;
+
+                whyHtml = '<p>You\'re generating ' + currentLeads + ' leads/mo. ' +
+                    'Scaling to ' + targetLeads + ' at your current ' + (conversionRate * 100).toFixed(0) + '% close rate adds ' +
+                    additionalDealsLV + ' deal' + (additionalDealsLV !== 1 ? 's' : '') +
+                    '/mo  $' + Math.round(projectedGain).toLocaleString() + ' in new revenue.</p>';
+            }
+
+            if (projectedGain > 0) {
+                whyHtml += '<div class="why-highlight">' +
+                    '<div class="why-highlight-number">+$' + Math.round(projectedGain).toLocaleString() + '/mo</div>' +
+                    '<div class="why-highlight-label">Projected monthly impact from resolving this constraint</div>' +
+                    '</div>';
+            }
+
+            document.getElementById('whyContent').innerHTML = whyHtml;
+        }
+
+
+        // --- Metric Popover ---
+        var METRIC_INFO = {
+            grossMargin: {
+                title: 'Gross Margin',
+                definition: 'Revenue minus the direct cost of delivering your product or service, expressed as a percentage of revenue.',
+                whyItMatters: 'This is your engine efficiency. Higher margin means more dollars available to cover overhead, invest, or save for every dollar earned.',
+                interpret: function(v) {
+                    var val = parseFloat(v);
+                    if (val >= 50) return 'Strong margin. You have solid room to reinvest and absorb cost increases.';
+                    if (val >= 40) return 'Healthy for most service businesses. You have meaningful room to scale.';
+                    if (val >= 25) return 'Stable but limited room for error. Growth may squeeze you without pricing or cost improvements.';
+                    return 'Low margin. Revenue growth alone may increase financial stress without structural changes.';
+                }
+            },
+            netMargin: {
+                title: 'Net Margin',
+                definition: 'What percentage of revenue remains after all expenses — delivery costs, fixed overhead, everything.',
+                whyItMatters: 'This is your bottom line. It tells you whether your business is actually generating profit or burning through revenue.',
+                interpret: function(v) {
+                    var val = parseFloat(v);
+                    if (val >= 20) return 'Very strong profitability. You have significant capacity to invest or weather downturns.';
+                    if (val >= 10) return 'Solid net margin. Your overhead is well-managed relative to revenue.';
+                    if (val >= 0) return 'Thin but positive. Small revenue dips or cost increases could push you negative.';
+                    return 'You are currently operating at a loss. Addressing this is foundational to growth.';
+                }
+            },
+            conversionRate: {
+                title: 'Conversion Rate',
+                definition: 'The percentage of your leads that become paying customers each month.',
+                whyItMatters: 'This measures how effectively you turn interest into revenue. Small improvements here compound into significant growth.',
+                interpret: function(v) {
+                    var val = parseFloat(v);
+                    if (val >= 20) return 'Healthy conversion. Your sales process is working well.';
+                    if (val >= 10) return 'Room for optimization. Tightening your process could unlock meaningful revenue.';
+                    if (val >= 5) return 'Below average. There may be a disconnect between your leads and your offer.';
+                    return 'Major revenue leak. This is likely your biggest growth opportunity right now.';
+                }
+            },
+            capacityUtilization: {
+                title: 'Capacity Utilization',
+                definition: 'How much of your maximum delivery capacity you are currently using.',
+                whyItMatters: 'Too low means wasted resources. Too high means no room to take on new business without quality suffering.',
+                interpret: function(v) {
+                    var val = parseFloat(v);
+                    if (val >= 90) return 'Near or at capacity. New growth requires expanding your ability to deliver.';
+                    if (val >= 70) return 'Healthy utilization. You have some room to grow without operational changes.';
+                    if (val >= 50) return 'Moderate. You have significant unused capacity — the constraint is likely elsewhere.';
+                    return 'Low utilization. Your bottleneck is almost certainly demand, not delivery.';
+                }
+            },
+            monthlyBurn: {
+                title: 'Monthly Burn',
+                definition: 'Your total monthly cash outflow — what it costs to keep the business running each month.',
+                whyItMatters: 'This is your baseline survival cost. It determines how long you can operate without new revenue and how urgently you need to grow.',
+                interpret: function(v) {
+                    var val = parseFloat(v);
+                    if (val <= 0) return 'You are cash-flow positive. Your revenue covers all expenses.';
+                    if (val <= 10000) return 'Manageable burn. Keep an eye on it as you scale.';
+                    if (val <= 50000) return 'Moderate burn. Make sure your runway gives you enough time to hit milestones.';
+                    return 'High burn rate. Growth or cost reduction should be a near-term priority.';
+                }
+            },
+            runway: {
+                title: 'Runway',
+                definition: 'How many months your business can continue operating at the current burn rate with cash on hand.',
+                whyItMatters: 'Runway is your decision-making timeline. Less runway means less room for experimentation and more pressure on every bet.',
+                interpret: function(v) {
+                    var val = parseFloat(v);
+                    if (val >= 12 || val >= 9999) return 'Comfortable runway. You have time to be strategic about growth.';
+                    if (val >= 6) return 'Adequate cushion, but keep monitoring. Plan for revenue growth or fundraising.';
+                    if (val >= 3) return 'Moderate pressure. Important decisions should be made in the next quarter.';
+                    return 'High risk. Immediate focus on cash preservation or revenue acceleration is critical.';
+                }
+            }
+        };
+
+        function showMetricPopover(el) {
+            closeMetricPopover();
+            var key = el.getAttribute('data-metric');
+            var rawVal = el.getAttribute('data-raw');
+            var info = METRIC_INFO[key];
+            if (!info) return;
+
+            var metricItem = el.closest('.metric-item');
+            var interpretation = info.interpret(rawVal);
+
+            var overlay = document.createElement('div');
+            overlay.className = 'metric-popover-overlay';
+            overlay.id = 'metricPopoverOverlay';
+            overlay.addEventListener('click', closeMetricPopover);
+
+            var popover = document.createElement('div');
+            popover.className = 'metric-popover';
+            popover.id = 'metricPopover';
+            popover.innerHTML =
+                '<div class="metric-popover-header">' +
+                    '<div class="metric-popover-title">' + info.title + '</div>' +
+                    '<button class="metric-popover-close" onclick="closeMetricPopover()">&times;</button>' +
+                '</div>' +
+                '<div class="metric-popover-section">' +
+                    '<div class="metric-popover-label">Definition</div>' +
+                    '<div class="metric-popover-text">' + info.definition + '</div>' +
+                '</div>' +
+                '<div class="metric-popover-section">' +
+                    '<div class="metric-popover-label">Why it matters</div>' +
+                    '<div class="metric-popover-text">' + info.whyItMatters + '</div>' +
+                '</div>' +
+                '<div class="metric-popover-section">' +
+                    '<div class="metric-popover-label">Your current value</div>' +
+                    '<div class="metric-popover-interpretation">' + interpretation + '</div>' +
+                '</div>';
+
+            popover.addEventListener('click', function(e) { e.stopPropagation(); });
+
+            document.body.appendChild(overlay);
+            metricItem.style.position = 'relative';
+            metricItem.appendChild(popover);
+
+            // Position: try below, flip up if off-screen
+            var rect = metricItem.getBoundingClientRect();
+            var popRect = popover.getBoundingClientRect();
+            if (popRect.bottom > window.innerHeight - 20) {
+                popover.style.bottom = '100%';
+                popover.style.top = 'auto';
+                popover.style.marginBottom = '4px';
+            } else {
+                popover.style.top = '100%';
+                popover.style.marginTop = '4px';
+            }
+            popover.style.left = '0';
+
+            // On mobile, center the popover
+            if (window.innerWidth < 640) {
+                popover.style.position = 'fixed';
+                popover.style.left = '50%';
+                popover.style.top = '50%';
+                popover.style.transform = 'translate(-50%, -50%)';
+                popover.style.width = 'calc(100vw - 2rem)';
+                popover.style.maxWidth = '340px';
+                popover.style.margin = '0';
+                document.body.appendChild(popover);
+            }
+        }
+
+        function closeMetricPopover() {
+            var overlay = document.getElementById('metricPopoverOverlay');
+            var popover = document.getElementById('metricPopover');
+            if (overlay) overlay.remove();
+            if (popover) popover.remove();
+        }
+
+        // --- Feedback handling ---
+        var selectedRating = null;
+
+        document.getElementById('feedbackButtons').addEventListener('click', function(e) {
+            var btn = e.target.closest('.feedback-btn');
+            if (!btn) return;
+            var allBtns = document.querySelectorAll('.feedback-btn');
+            allBtns.forEach(function(b) { b.classList.remove('selected'); });
+            btn.classList.add('selected');
+            selectedRating = btn.getAttribute('data-rating');
+            document.getElementById('feedbackCommentWrap').classList.add('visible');
+            document.getElementById('feedbackSubmitBtn').classList.add('visible');
+        });
+
+        document.getElementById('feedbackSubmitBtn').addEventListener('click', function() {
+            if (!selectedRating) return;
+            // No Supabase save for anonymous users  just show thanks
+            showFeedbackThanks();
+        });
+
+        function showFeedbackThanks() {
+            document.getElementById('feedbackButtons').style.display = 'none';
+            document.getElementById('feedbackCommentWrap').style.display = 'none';
+            document.getElementById('feedbackSubmitBtn').style.display = 'none';
+            document.querySelector('.feedback-heading').style.display = 'none';
+            document.getElementById('feedbackThanks').classList.add('visible');
+        }
+    </script>
+</body>
+</html>
+ + d.monthlyBurn.toLocaleString() },
+                { name: 'Runway', key: 'runway', raw: d.runwayMonths === Infinity ? 9999 : d.runwayMonths, value: d.runwayMonths === Infinity ? '> 99 mo' : d.runwayMonths.toFixed(1) + ' mo' }
             ];
 
             var metricsHtml = '';
