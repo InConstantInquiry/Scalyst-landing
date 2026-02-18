@@ -6,7 +6,7 @@
     <title>Scalyst &mdash; Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600;700&family=DM+Serif+Display:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-light: #CCFFD6;
@@ -28,59 +28,83 @@
             --font-serif: 'DM Serif Display', serif;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font-display); color: var(--neutral-900); line-height: 1.6; -webkit-font-smoothing: antialiased; background: var(--neutral-100); }
+        body { font-family: var(--font-display); color: var(--neutral-900); line-height: 1.6; background: var(--neutral-100); }
 
-        header { position: fixed; top: 0; left: 0; right: 0; background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); border-bottom: 1px solid var(--neutral-200); z-index: 1000; padding: 1.25rem 0; }
-        .header-content { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
-        .logo-text { font-family: var(--font-serif); font-size: 1.75rem; font-weight: 400; color: var(--near-black); letter-spacing: -0.02em; text-decoration: none; }
-        .header-right { display: flex; align-items: center; gap: 1.5rem; }
-        .user-email { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--neutral-500); }
-        .sign-out-btn { font-size: 0.8125rem; font-weight: 600; color: var(--neutral-700); text-decoration: none; font-family: var(--font-mono); letter-spacing: 0.02em; cursor: pointer; background: none; border: none; padding: 0; }
-        .sign-out-btn:hover { color: #D32F2F; }
+        header { position: fixed; top: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); z-index: 100; border-bottom: 1px solid var(--neutral-200); }
+        .header-content { max-width: 800px; margin: 0 auto; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo-text { font-family: var(--font-serif); font-size: 1.5rem; color: var(--near-black); text-decoration: none; }
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .sign-out-btn { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--neutral-500); background: none; border: none; cursor: pointer; }
+        .sign-out-btn:hover { color: var(--neutral-700); }
+        .user-email { display: none; }
 
         main { max-width: 800px; margin: 0 auto; padding: 7rem 2rem 5rem; }
-        .page-badge { display: inline-block; font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700; color: var(--darker-anchor); background: var(--white); padding: 0.5rem 1rem; border: 1.5px solid var(--primary-accent); border-radius: 4px; margin-bottom: 1.5rem; letter-spacing: 0.08em; text-transform: uppercase; }
-        h1 { font-size: 2rem; font-weight: 700; line-height: 1.15; color: var(--near-black); margin-bottom: 2rem; letter-spacing: -0.025em; }
+        .page-badge { display: inline-block; font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dark-anchor); background: var(--primary-light); padding: 0.375rem 0.75rem; border-radius: 2px; margin-bottom: 1.5rem; }
+        h1 { font-size: 2rem; font-weight: 700; line-height: 1.15; color: var(--near-black); }
 
         .loading-state { text-align: center; padding: 4rem 0; color: var(--neutral-500); font-family: var(--font-mono); font-size: 0.875rem; }
 
-        .constraint-card { background: var(--white); border: 1.5px solid var(--neutral-200); border-radius: 8px; padding: 2rem; margin-bottom: 1.5rem; }
-        .constraint-card-label { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--primary-accent); margin-bottom: 0.5rem; }
-        .constraint-card-value { font-size: 2rem; font-weight: 700; color: var(--near-black); margin-bottom: 0.25rem; }
-        .constraint-card-date { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--neutral-500); }
+        .constraint-card { background: var(--white); border: 1.5px solid var(--neutral-200); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        .constraint-card-label { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--neutral-500); margin-bottom: 0.5rem; }
+        .constraint-card-value { font-size: 2rem; font-weight: 700; color: var(--near-black); }
+        .constraint-card-date { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--neutral-500); margin-top: 0.25rem; }
 
         .action-row { display: flex; gap: 1rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
-        .action-btn { display: inline-block; padding: 0.875rem 1.75rem; background: var(--near-black); color: var(--white); text-decoration: none; border-radius: 6px; font-size: 0.9375rem; font-weight: 600; font-family: var(--font-display); transition: all 0.3s ease; border: none; cursor: pointer; }
+        .action-btn { display: inline-block; padding: 0.875rem 1.75rem; background: var(--near-black); color: var(--white); font-family: var(--font-display); font-size: 0.875rem; font-weight: 600; border: none; border-radius: 6px; text-decoration: none; cursor: pointer; }
         .action-btn:hover { background: var(--neutral-700); transform: translateY(-1px); }
         .action-btn.secondary { background: var(--white); color: var(--near-black); border: 1.5px solid var(--neutral-200); }
-        .action-btn.secondary:hover { border-color: var(--primary-accent); color: var(--primary-accent); background: var(--white); }
+        .action-btn.secondary:hover { border-color: var(--primary-accent); color: var(--primary-accent); }
 
-        .section-card { background: var(--white); border: 1.5px solid var(--neutral-200; border-radius: 8px; padding: 2rem; margin-bottom: 1.5rem; }
-        .section-label { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--neutral-500); margin-bottom: 1.25rem; }
+        .section-card { background: var(--white); border: 1.5px solid var(--neutral-200); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; }
+        .section-label { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--neutral-500); margin-bottom: 1rem; }
 
+        /* Execution Sequence Styles */
+        .execution-list { list-style: none; padding: 0; }
+        .execution-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--neutral-200); position: relative; }
+        .execution-item:last-child { border-bottom: none; }
+
+        .step-indicator { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; border: 2px solid var(--neutral-200); color: var(--neutral-500); background: var(--white); margin-top: 2px; }
+        .step-indicator.active { border-color: var(--primary-accent); color: var(--primary-accent); background: var(--primary-light); }
+        .step-indicator.done { border-color: var(--primary-accent); color: var(--white); background: var(--primary-accent); }
+
+        .step-content { flex: 1; min-width: 0; }
+        .step-title { font-weight: 600; font-size: 0.9375rem; color: var(--near-black); margin-bottom: 0.125rem; }
+        .step-description { font-size: 0.8125rem; color: var(--neutral-500); margin-bottom: 0.25rem; }
+        .step-metric { font-family: var(--font-mono); font-size: 0.75rem; color: var(--neutral-700); background: var(--neutral-100); padding: 0.25rem 0.5rem; border-radius: 3px; display: inline-block; margin-top: 0.25rem; }
+
+        .step-status { flex-shrink: 0; }
+        .status-select { font-family: var(--font-mono); font-size: 0.75rem; padding: 0.375rem 0.5rem; border: 1.5px solid var(--neutral-200); border-radius: 4px; background: var(--white); color: var(--neutral-700); cursor: pointer; appearance: auto; }
+        .status-select:disabled { opacity: 0.4; cursor: not-allowed; }
+        .status-select.status-not_started { border-color: var(--neutral-200); }
+        .status-select.status-in_progress { border-color: #E8A317; background: #FFF8E1; color: #8B6914; }
+        .status-select.status-implemented { border-color: #2196F3; background: #E3F2FD; color: #1565C0; }
+        .status-select.status-verified { border-color: var(--primary-accent); background: var(--primary-light); color: var(--dark-anchor); }
+
+        .sequence-guard-msg { font-family: var(--font-mono); font-size: 0.6875rem; color: #C0392B; margin-top: 0.25rem; display: none; }
+
+        .resolved-banner { background: var(--primary-light); border: 1.5px solid var(--primary-accent); border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; display: none; }
+        .resolved-banner p { font-size: 0.9375rem; font-weight: 600; color: var(--dark-anchor); margin-bottom: 0.5rem; }
+        .resolved-banner .resolved-sub { font-size: 0.8125rem; font-weight: 400; color: var(--darker-anchor); }
+
+        /* Timeline styles */
         .timeline-entries { padding-left: 0; }
-        .timeline-entry { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.25rem; }
+        .timeline-entry { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
         .timeline-entry:last-child { margin-bottom: 0; }
-        .timeline-track { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; padding-top: 0.25rem; }
-        .timeline-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--neutral-200); border: 2px solid var(--neutral-500); }
+        .timeline-track { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+        .timeline-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--neutral-200); border: 2px solid var(--neutral-200); }
         .timeline-dot.current { background: var(--primary-accent); border-color: var(--primary-accent); }
-        .timeline-line { width: 2px; flex: 1; background: var(--neutral-200); min-height: 24px; margin-top: 4px; }
+        .timeline-line { width: 2px; flex: 1; background: var(--neutral-200); min-height: 24px; }
         .timeline-content { flex: 1; }
-        .timeline-date { font-family: var(--font-mono); font-size: 0.75rem; color: var(--neutral-500); margin-bottom: 0.125rem; }
+        .timeline-date { font-family: var(--font-mono); font-size: 0.75rem; color: var(--neutral-500); }
         .timeline-constraint { font-size: 1rem; font-weight: 600; color: var(--near-black); }
-        .change-tag { display: inline-block; font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 3px; margin-left: 0.5rem; vertical-align: middle; }
+        .change-tag { display: inline-block; font-family: var(--font-mono); font-size: 0.6875rem; padding: 0.125rem 0.375rem; border-radius: 3px; margin-left: 0.5rem; }
         .change-tag.same { background: var(--neutral-100); color: var(--neutral-500); }
         .change-tag.changed { background: var(--primary-light); color: var(--darker-anchor); }
 
-        .simulator-placeholder { background: var(--white); border: 1.5px dashed var(--neutral-200); border-radius: 8px; padding: 2.5rem 2rem; text-align: center; }
-        .simulator-placeholder-label { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--neutral-500); margin-bottom: 0.75rem; }
-        .simulator-placeholder-title { font-size: 1.25rem; font-weight: 700; color: var(--neutral-700); margin-bottom: 0.5rem; }
-        .simulator-placeholder-desc { font-size: 0.9375rem; color: var(--neutral-500); }
-
-        .empty-state { text-align: center; padding: 4rem 2rem; background: var(--white); border: 1.5px solid var(--neutral-200); border-radius: 8px; }
-        .empty-state h2 { font-size: 1.5rem; font-weight: 700; color: var(--near-black); margin-bottom: 0.75rem; }
+        .empty-state { text-align: center; padding: 4rem 2rem; }
+        .empty-state h2 { font-size: 1.5rem; font-weight: 700; color: var(--near-black); margin-bottom: 1rem; }
         .empty-state p { font-size: 1rem; color: var(--neutral-500); margin-bottom: 2rem; max-width: 400px; margin-left: auto; margin-right: auto; }
-        .empty-state a { display: inline-block; padding: 1rem 2.5rem; background: var(--near-black); color: var(--white); text-decoration: none; border-radius: 6px; font-weight: 600; transition: all 0.3s ease; }
+        .empty-state a { display: inline-block; padding: 1rem 2.5rem; background: var(--near-black); color: var(--white); font-family: var(--font-display); font-size: 1rem; font-weight: 600; border-radius: 6px; text-decoration: none; }
         .empty-state a:hover { background: var(--neutral-700); }
 
         @media (max-width: 640px) {
@@ -89,11 +113,13 @@
             .action-row { flex-direction: column; }
             .action-btn { text-align: center; }
             .header-right { gap: 0.75rem; }
-            .user-email { display: none; }
+            .execution-item { flex-wrap: wrap; }
+            .step-status { width: 100%; margin-top: 0.5rem; }
+            .status-select { width: 100%; }
         }
     </style>
-  </head>
-<bUdr¾
+</head>
+<body>
     <header>
         <div class="header-content">
             <a href="/dashboard/" class="logo-text">Scalyst</a>
@@ -109,13 +135,11 @@
 
         <div class="empty-state" id="emptyState" style="display:none;">
             <h2>No diagnostic data yet</h2>
-            <p>Run the free diagnostic to identify your primary growth constraint and start tracking it.</p>
+            <p>Run the free diagnostic to identify your primary growth constraint and start tracking progress.</p>
             <a href="/diagnostic/">Run Diagnostic</a>
         </div>
 
         <div id="dashboardContent" style="display:none;">
-            <div class="page-badge">Dashboard</div>
-            <h1>Your Growth Constraint</h1>
 
             <div class="constraint-card">
                 <div class="constraint-card-label">Current Primary Constraint</div>
@@ -124,8 +148,19 @@
             </div>
 
             <div class="action-row">
-                <a href="/update/" class="action-btn">Hun Monthly Check-In</a>
+                <a href="/update/" class="action-btn">Run Monthly Check-In</a>
                 <a href="/diagnostic/" class="action-btn secondary">Retake Full Diagnostic</a>
+            </div>
+
+            <!-- EXECUTION SEQUENCE — Phase 3 -->
+            <div id="resolvedBanner" class="resolved-banner">
+                <p>Constraint appears resolved.</p>
+                <span class="resolved-sub">Run an Operating Evaluation to confirm and identify the next constraint.</span>
+            </div>
+
+            <div class="section-card" id="executionSection" style="display:none;">
+                <div class="section-label">Execution Sequence</div>
+                <ol class="execution-list" id="executionList"></ol>
             </div>
 
             <div class="section-card">
@@ -133,19 +168,43 @@
                 <div class="timeline-entries" id="timelineEntries"></div>
             </div>
 
-            <div class="simulator-placeholder">
-                <div class="simulator-placeholder-label">Coming Soon</div>
-                <div class="simulator-placeholder-title">Decision Simulator</div>
-                <div class="simulator-placeholder-desc">Model the impact of changes before you make them. See how pricing, hiring, or marketing spend shifts your constraint.</div>
-            </div>
         </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        var SUPABASE_URL = 'https://raqwjzcdcfrw(newwdke.supabase.co';
-        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcXdqemNkY2Zyd3duZXd3ZGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5ODETMTAsImV4cCI6MjA4NjU2MDUzMH0.WEAZ1Kvp4wwQBL1wRJSc0T43C87u79nruU6UqJZpDoE';
+        var SUPABASE_URL = 'https://raqwjzcdcfrwwnewwdke.supabase.co';
+        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcXdqemNkY2Zyd3duZXd3ZGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk2NjMxNTIsImV4cCI6MjA2NTIzOTE1Mn0.yMqJoakZGSmBJJ8wFiY_LGbIFHI3SmmcbjVCl5UV5Yk';
         var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Predefined action sets per constraint
+        var CONSTRAINT_ACTIONS = {
+            'conversion': [
+                { action_key: 'audit_funnel', title: 'Audit Sales Funnel', description: 'Map every step from lead to close. Identify where prospects drop off.', success_metric: 'Documented funnel with drop-off rates per stage', sequence_order: 1 },
+                { action_key: 'standardize_followup', title: 'Standardize Follow-Up', description: 'Create a repeatable follow-up sequence with defined timing and messaging.', success_metric: 'Follow-up sequence documented and adopted by team', sequence_order: 2 },
+                { action_key: 'delay_paid_acquisition', title: 'Delay Paid Acquisition Increase', description: 'Do not increase ad spend until conversion rate improves. Fix the leak before adding water.', success_metric: 'Conversion rate improved before scaling spend', sequence_order: 3 }
+            ],
+            'margin': [
+                { action_key: 'cost_audit', title: 'Audit Cost of Delivery', description: 'Break down every cost that goes into delivering your product or service.', success_metric: 'Line-item cost breakdown documented', sequence_order: 1 },
+                { action_key: 'reprice_offerings', title: 'Reprice or Repackage Offerings', description: 'Identify if pricing is below market or if low-margin services can be bundled differently.', success_metric: 'Revised pricing implemented on at least one offering', sequence_order: 2 },
+                { action_key: 'cut_low_margin', title: 'Cut or Restructure Low-Margin Work', description: 'Eliminate or renegotiate engagements that drag overall margin down.', success_metric: 'Gross margin improved by at least 3 points', sequence_order: 3 }
+            ],
+            'capacity': [
+                { action_key: 'map_bottlenecks', title: 'Map Capacity Bottlenecks', description: 'Identify which roles, processes, or resources are at or above capacity.', success_metric: 'Bottleneck map with utilization rates per resource', sequence_order: 1 },
+                { action_key: 'automate_or_delegate', title: 'Automate or Delegate Low-Value Tasks', description: 'Free up capacity by removing tasks that do not require senior attention.', success_metric: 'At least 5 hours/week freed per constrained resource', sequence_order: 2 },
+                { action_key: 'add_capacity', title: 'Add Targeted Capacity', description: 'Hire, contract, or outsource specifically for the bottleneck identified in Step 1.', success_metric: 'Utilization back below 85% for constrained resources', sequence_order: 3 }
+            ],
+            'cash flow': [
+                { action_key: 'accelerate_collections', title: 'Accelerate Collections', description: 'Tighten payment terms, send invoices immediately, and follow up on aging receivables.', success_metric: 'Average days to collect reduced by at least 10 days', sequence_order: 1 },
+                { action_key: 'restructure_payment_terms', title: 'Restructure Payment Terms', description: 'Move to deposits, milestone billing, or retainers to front-load cash.', success_metric: 'At least 50% of new contracts on improved terms', sequence_order: 2 },
+                { action_key: 'build_cash_reserve', title: 'Build Cash Reserve', description: 'Set aside a fixed percentage of revenue monthly until runway exceeds 3 months.', success_metric: 'Cash runway exceeds 3 months of operating expenses', sequence_order: 3 }
+            ],
+            'lead volume': [
+                { action_key: 'identify_best_channel', title: 'Identify Best-Performing Channel', description: 'Determine which channel currently produces the highest quality leads at lowest cost.', success_metric: 'Top channel identified with cost-per-lead documented', sequence_order: 1 },
+                { action_key: 'double_down_channel', title: 'Double Down on Top Channel', description: 'Increase investment in the proven channel before experimenting with new ones.', success_metric: 'Lead volume from top channel increased by 50%', sequence_order: 2 },
+                { action_key: 'add_secondary_channel', title: 'Add One Secondary Channel', description: 'Only after primary channel is scaled, test one additional channel methodically.', success_metric: 'Secondary channel producing measurable leads within 60 days', sequence_order: 3 }
+            ]
+        };
 
         // Auth guard
         sb.auth.getSession().then(function(res) {
@@ -177,7 +236,7 @@
                         return;
                     }
 
-                    loadConstraintData(res.data.id);
+                    loadConstraintData(res.data.id, user.id);
                 })
                 .catch(function() {
                     document.getElementById('loadingState').style.display = 'none';
@@ -185,7 +244,7 @@
                 });
         }
 
-        function loadConstraintData(profileId) {
+        function loadConstraintData(profileId, userId) {
             sb.from('constraint_snapshots')
                 .select('*')
                 .eq('business_id', profileId)
@@ -203,39 +262,248 @@
                     var date = new Date(latest.created_at);
                     document.getElementById('constraintDate').textContent = 'As of ' + date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
-                    var timelineHtml = '';
-                    snapshots.forEach(function(snap, i) {
-                        var d = new Date(snap.created_at);
-                        var dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                        var isCurrent = i === 0;
-                        var showLine = i < snapshots.length - 1;
-                        var changeTag = '';
-
-                        if (i < snapshots.length - 1) {
-                            var prev = snapshots[i + 1];
-                            if (snap.primary_constraint === prev.primary_constraint) {
-                                changeTag = '<span class="change-tag same">Same</span>';
-                            } else {
-                                changeTag = '<span class="change-tag changed">Shifted</span>';
-                            }
-                        }
-
-                        timelineHtml += '<div class="timeline-entry">' +
-                            '<div class="timeline-track">' +
-                            '<div class="timeline-dot' + (isCurrent ? ' current' : '') + '"></div>' +
-                            (showLine ? '<div class="timeline-line"></div>' : '') +
-                            '</div>' +
-                            '<div class="timeline-content">' +
-                            '<div class="timeline-date">' + dateStr + '</div>' +
-                            '<div class="timeline-constraint">' + snap.primary_constraint + changeTag + '</div>' *
-                            '</div>' {
-                            '</div>';
-                    });
-
-                    document.getElementById('timelineEntries').innerHTML = timelineHtml;
+                    renderTimeline(snapshots);
+                    loadOrGenerateActions(latest, userId);
                     document.getElementById('dashboardContent').style.display = 'block';
                 });
         }
+
+        function loadOrGenerateActions(snapshot, userId) {
+            sb.from('constraint_actions')
+                .select('*')
+                .eq('snapshot_id', snapshot.id)
+                .eq('user_id', userId)
+                .order('sequence_order', { ascending: true })
+                .then(function(res) {
+                    if (res.error) {
+                        console.error('Error loading actions:', res.error);
+                        return;
+                    }
+
+                    if (res.data && res.data.length > 0) {
+                        renderExecutionSequence(res.data, snapshot, userId);
+                    } else {
+                        generateActions(snapshot, userId);
+                    }
+                });
+        }
+
+        function generateActions(snapshot, userId) {
+            var constraintKey = snapshot.primary_constraint.toLowerCase();
+            var actionSet = CONSTRAINT_ACTIONS[constraintKey];
+
+            if (!actionSet) {
+                console.warn('No predefined actions for constraint:', constraintKey);
+                return;
+            }
+
+            var rows = actionSet.map(function(a) {
+                return {
+                    user_id: userId,
+                    snapshot_id: snapshot.id,
+                    action_key: a.action_key,
+                    title: a.title,
+                    description: a.description,
+                    success_metric: a.success_metric,
+                    sequence_order: a.sequence_order,
+                    status: 'not_started'
+                };
+            });
+
+            sb.from('constraint_actions')
+                .insert(rows)
+                .select()
+                .then(function(res) {
+                    if (res.error) {
+                        console.error('Error generating actions:', res.error);
+                        return;
+                    }
+                    var actions = res.data.sort(function(a, b) { return a.sequence_order - b.sequence_order; });
+                    renderExecutionSequence(actions, snapshot, userId);
+                });
+        }
+
+        function renderExecutionSequence(actions, snapshot, userId) {
+            var listEl = document.getElementById('executionList');
+            listEl.innerHTML = '';
+            document.getElementById('executionSection').style.display = 'block';
+
+            actions.forEach(function(action, idx) {
+                var li = document.createElement('li');
+                li.className = 'execution-item';
+                li.setAttribute('data-action-id', action.id);
+                li.setAttribute('data-sequence', action.sequence_order);
+
+                var indicatorClass = 'step-indicator';
+                if (action.status === 'verified') {
+                    indicatorClass += ' done';
+                } else if (action.status === 'in_progress' || action.status === 'implemented') {
+                    indicatorClass += ' active';
+                }
+
+                var selectHtml = buildStatusSelect(action, actions, idx);
+
+                li.innerHTML =
+                    '<div class="' + indicatorClass + '">' + action.sequence_order + '</div>' +
+                    '<div class="step-content">' +
+                        '<div class="step-title">' + escapeHtml(action.title) + '</div>' +
+                        '<div class="step-description">' + escapeHtml(action.description) + '</div>' +
+                        '<div class="step-metric">' + escapeHtml(action.success_metric) + '</div>' +
+                        '<div class="sequence-guard-msg" id="guard-' + action.id + '"></div>' +
+                    '</div>' +
+                    '<div class="step-status">' + selectHtml + '</div>';
+
+                listEl.appendChild(li);
+            });
+
+            actions.forEach(function(action) {
+                var selectEl = document.getElementById('select-' + action.id);
+                if (selectEl) {
+                    selectEl.addEventListener('change', function() {
+                        handleStatusChange(action.id, this.value, actions, snapshot, userId);
+                    });
+                }
+            });
+
+            checkAllResolved(actions);
+        }
+
+        function buildStatusSelect(action, allActions, idx) {
+            var currentStatus = action.status;
+            var prevAction = idx > 0 ? allActions[idx - 1] : null;
+
+            var canProgress = true;
+            var disabledReason = '';
+
+            if (prevAction && prevAction.status === 'not_started' && currentStatus === 'not_started') {
+                canProgress = false;
+                disabledReason = 'Complete Step ' + prevAction.sequence_order + ' first';
+            }
+
+            var statusLabels = {
+                'not_started': 'Not Started',
+                'in_progress': 'In Progress',
+                'implemented': 'Implemented',
+                'verified': 'Verified'
+            };
+
+            var statusClass = 'status-select status-' + currentStatus;
+
+            if (!canProgress && currentStatus === 'not_started') {
+                return '<select class="' + statusClass + '" id="select-' + action.id + '" disabled>' +
+                    '<option value="not_started">Not Started</option>' +
+                    '</select>' +
+                    '<div class="sequence-guard-msg" style="display:block">' + disabledReason + '</div>';
+            }
+
+            var html = '<select class="' + statusClass + '" id="select-' + action.id + '">';
+            var allStatuses = ['not_started', 'in_progress', 'implemented', 'verified'];
+            allStatuses.forEach(function(s) {
+                var selected = s === currentStatus ? ' selected' : '';
+                html += '<option value="' + s + '"' + selected + '>' + statusLabels[s] + '</option>';
+            });
+            html += '</select>';
+            return html;
+        }
+
+        function handleStatusChange(actionId, newStatus, allActions, snapshot, userId) {
+            var actionIdx = -1;
+            var action = null;
+            for (var i = 0; i < allActions.length; i++) {
+                if (allActions[i].id === actionId) {
+                    actionIdx = i;
+                    action = allActions[i];
+                    break;
+                }
+            }
+            if (!action) return;
+
+            var prevAction = actionIdx > 0 ? allActions[actionIdx - 1] : null;
+            var guardEl = document.getElementById('guard-' + actionId);
+
+            if (prevAction && newStatus !== 'not_started') {
+                var prevStatusRank = statusRank(prevAction.status);
+                if (prevStatusRank < 1) {
+                    if (guardEl) {
+                        guardEl.textContent = 'Step ' + prevAction.sequence_order + ' must be at least In Progress first.';
+                        guardEl.style.display = 'block';
+                    }
+                    document.getElementById('select-' + actionId).value = action.status;
+                    return;
+                }
+            }
+
+            if (guardEl) guardEl.style.display = 'none';
+
+            sb.from('constraint_actions')
+                .update({ status: newStatus, updated_at: new Date().toISOString() })
+                .eq('id', actionId)
+                .eq('user_id', userId)
+                .then(function(res) {
+                    if (res.error) {
+                        console.error('Error updating status:', res.error);
+                        document.getElementById('select-' + actionId).value = action.status;
+                        return;
+                    }
+                    action.status = newStatus;
+                    renderExecutionSequence(allActions, snapshot, userId);
+                });
+        }
+
+        function statusRank(status) {
+            var ranks = { 'not_started': 0, 'in_progress': 1, 'implemented': 2, 'verified': 3 };
+            return ranks[status] || 0;
+        }
+
+        function checkAllResolved(actions) {
+            var allVerified = actions.every(function(a) { return a.status === 'verified'; });
+            var banner = document.getElementById('resolvedBanner');
+            if (allVerified && actions.length > 0) {
+                banner.style.display = 'block';
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+
+        function renderTimeline(snapshots) {
+            var timelineHtml = '';
+            snapshots.forEach(function(snap, i) {
+                var d = new Date(snap.created_at);
+                var dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                var isCurrent = i === 0;
+                var showLine = i < snapshots.length - 1;
+                var changeTag = '';
+
+                if (i < snapshots.length - 1) {
+                    var prev = snapshots[i + 1];
+                    if (snap.primary_constraint === prev.primary_constraint) {
+                        changeTag = '<span class="change-tag same">Same</span>';
+                    } else {
+                        changeTag = '<span class="change-tag changed">Shifted</span>';
+                    }
+                }
+
+                timelineHtml += '<div class="timeline-entry">' +
+                    '<div class="timeline-track">' +
+                    '<div class="timeline-dot' + (isCurrent ? ' current' : '') + '"></div>' +
+                    (showLine ? '<div class="timeline-line"></div>' : '') +
+                    '</div>' +
+                    '<div class="timeline-content">' +
+                    '<div class="timeline-date">' + dateStr + '</div>' +
+                    '<div class="timeline-constraint">' + snap.primary_constraint +
+                    '</div>' + changeTag +
+                    '</div>' +
+                    '</div>';
+            });
+
+            document.getElementById('timelineEntries').innerHTML = timelineHtml;
+        }
+
+        function escapeHtml(str) {
+            var div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
     </script>
-  ¼/body>
+</body>
 </html>
