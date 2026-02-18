@@ -656,7 +656,7 @@
 
         function showResults(data) {
             // Show constraint immediately  no blur
-            document.getElementById('constraintLabel').textContent = data.constraint;
+                        document.getElementById('constraintLabel').textContent = data.constraint.charAt(0).toUpperCase() + data.constraint.slice(1);
             document.getElementById('resultState').classList.add('visible');
 
             // Build expandable action cards with blurred details
