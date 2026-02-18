@@ -84,7 +84,13 @@
 
         .resolved-banner { background: var(--primary-light); border: 1.5px solid var(--primary-accent); border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; display: none; }
         .resolved-banner p { font-size: 0.9375rem; font-weight: 600; color: var(--dark-anchor); margin-bottom: 0.5rem; }
-        .resolved-banner .resolved-sub { font-size: 0.8125rem; font-weight: 400; color: var(--darker-anchor); }
+        .resolved-banner .resolved-sub { display: block; font-size: 0.9375rem; font-weight: 400; color: var(--darker-anchor); }
+        .resolved-banner .resolved-deltas { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(61,153,16,0.25); }
+        .delta-pill { display: inline-flex; align-items: center; gap: 0.375rem; font-family: var(--font-mono); font-size: 0.75rem; background: rgba(61,153,16,0.1); color: var(--dark-anchor); padding: 0.3125rem 0.625rem; border-radius: 4px; }
+        .delta-pill strong { color: var(--primary-accent); }
+        .resolved-banner .resolved-encouragement { display: block; font-size: 0.875rem; font-weight: 400; color: var(--darker-anchor); margin-top: 1rem; line-height: 1.5; }
+        .resolved-banner .resolved-cta { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--dark-anchor); color: var(--white); font-family: var(--font-display); font-size: 0.875rem; font-weight: 600; border-radius: 6px; text-decoration: none; }
+        .resolved-banner .resolved-cta:hover { background: var(--darker-anchor); }
 
         /* Timeline styles */
         .timeline-entries { padding-left: 0; }
@@ -116,6 +122,8 @@
             .execution-item { flex-wrap: wrap; }
             .step-status { width: 100%; margin-top: 0.5rem; }
             .status-select { width: 100%; }
+            .resolved-deltas { flex-direction: column; }
+            .resolved-deltas { flex-direction: column; }
         }
     </style>
 </head>
@@ -149,13 +157,16 @@
 
             <div class="action-row">
                 <a href="/update/" class="action-btn">Run Monthly Check-In</a>
-                <a href="/diagnostic/" class="action-btn secondary">Retake Full Diagnostic</a>
+                <a href="/evaluation/" class="action-btn secondary">Re-Evaluate</a>
             </div>
 
             <!-- EXECUTION SEQUENCE â Phase 3 -->
             <div id="resolvedBanner" class="resolved-banner">
-                <p>Constraint appears resolved.</p>
-                <span class="resolved-sub">Run an Operating Evaluation to confirm and identify the next constraint.</span>
+                <p id="resolvedTitle">Constraint Resolved</p>
+                <span class="resolved-sub" id="resolvedSubtext"></span>
+                <div class="resolved-deltas" id="resolvedDeltas"></div>
+                <span class="resolved-encouragement">Most operators never identify their constraint. Fewer resolve it. This is structural progress.</span>
+                <a href="/evaluation/" class="resolved-cta">Run Re-Evaluation</a>
             </div>
 
             <div class="section-card" id="executionSection" style="display:none;">
@@ -176,6 +187,11 @@
         var SUPABASE_URL = 'https://raqwjzcdcfrwwnewwdke.supabase.co';
         var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcXdqemNkY2Zyd3duZXd3ZGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5ODQ1MzAsImV4cCI6MjA4NjU2MDUzMH0.WEAZ1Kvp4wwQBL1wRJSc0T43C87u79nruU6UqJZpDoE';
         var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Module-level state
+        var currentUserId = null;
+        var currentBusinessId = null;
+        var allSnapshots = null;
 
         // Predefined action sets per constraint
         var CONSTRAINT_ACTIONS = {
@@ -222,6 +238,7 @@
         });
 
         function loadDashboard(user) {
+            currentUserId = user.id;
             document.getElementById('userEmail').textContent = user.email;
 
             sb.from('business_profiles')
@@ -255,14 +272,14 @@
                         return;
                     }
 
-                    var snapshots = res.data;
-                    var latest = snapshots[0];
+                    allSnapshots = res.data;
+                    var latest = allSnapshots[0];
 
                     document.getElementById('currentConstraint').textContent = latest.primary_constraint;
                     var date = new Date(latest.created_at);
                     document.getElementById('constraintDate').textContent = 'As of ' + date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
-                    renderTimeline(snapshots);
+                    renderTimeline(allSnapshots);
                     loadOrGenerateActions(latest, userId);
                     document.getElementById('dashboardContent').style.display = 'block';
                 });
@@ -365,7 +382,7 @@
                 }
             });
 
-            checkAllResolved(actions);
+            checkAllResolved(actions, snapshot);
         }
 
         function buildStatusSelect(action, allActions, idx) {
@@ -455,14 +472,81 @@
             return ranks[status] || 0;
         }
 
-        function checkAllResolved(actions) {
+        function checkAllResolved(actions, snapshot) {
             var allVerified = actions.every(function(a) { return a.status === 'verified'; });
             var banner = document.getElementById('resolvedBanner');
             if (allVerified && actions.length > 0) {
                 banner.style.display = 'block';
+
+                // Populate banner with constraint name
+                var constraintName = snapshot.primary_constraint || 'your';
+                document.getElementById('resolvedTitle').textContent = 'Constraint Resolved';
+                document.getElementById('resolvedSubtext').textContent = 'You resolved your ' + constraintName + ' constraint. Structural conditions have improved.';
+
+                // Render delta metrics if we have a previous snapshot
+                renderDeltaMetrics();
+
+                // Log resolution event (only once)
+                logResolutionIfNeeded(snapshot.id);
             } else {
                 banner.style.display = 'none';
             }
+        }
+
+        function renderDeltaMetrics() {
+            var deltasEl = document.getElementById('resolvedDeltas');
+            if (!deltasEl || !allSnapshots || allSnapshots.length < 2) {
+                if (deltasEl) deltasEl.style.display = 'none';
+                return;
+            }
+
+            var current = allSnapshots[0];
+            var previous = allSnapshots[1];
+            var html = '';
+
+            var marginDelta = ((Number(current.gross_margin) - Number(previous.gross_margin)) * 100);
+            var revenueDelta = Number(current.monthly_revenue) - Number(previous.monthly_revenue);
+            var runwayDelta = Number(current.runway_months) - Number(previous.runway_months);
+
+            if (marginDelta > 0) {
+                html += '<span class="delta-pill">Gross Margin <strong>+' + marginDelta.toFixed(1) + '%</strong></span>';
+            }
+            if (revenueDelta > 0) {
+                html += '<span class="delta-pill">Revenue <strong>+$' + Math.round(revenueDelta).toLocaleString() + '</strong></span>';
+            }
+            if (runwayDelta > 0 && current.runway_months < 900) {
+                html += '<span class="delta-pill">Runway <strong>+' + runwayDelta.toFixed(1) + ' mo</strong></span>';
+            }
+
+            if (html) {
+                deltasEl.innerHTML = html;
+                deltasEl.style.display = 'flex';
+            } else {
+                deltasEl.style.display = 'none';
+            }
+        }
+
+        function logResolutionIfNeeded(snapshotId) {
+            // Check if we already logged a resolution for this snapshot
+            sb.from('constraint_events')
+                .select('id')
+                .eq('snapshot_id', snapshotId)
+                .eq('user_id', currentUserId)
+                .eq('event_type', 'constraint_resolved')
+                .then(function(res) {
+                    if (res.data && res.data.length > 0) return; // Already logged
+                    sb.from('constraint_events')
+                        .insert({
+                            user_id: currentUserId,
+                            snapshot_id: snapshotId,
+                            event_type: 'constraint_resolved'
+                        })
+                        .then(function(insertRes) {
+                            if (insertRes.error) {
+                                console.error('Error logging resolution:', insertRes.error);
+                            }
+                        });
+                });
         }
 
         function renderTimeline(snapshots) {
