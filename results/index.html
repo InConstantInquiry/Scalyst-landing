@@ -692,8 +692,8 @@
                 { name: 'Net Margin', key: 'netMargin', raw: (d.netMargin * 100).toFixed(1), value: (d.netMargin * 100).toFixed(1) + '%' },
                 { name: 'Conversion Rate', key: 'conversionRate', raw: (d.conversionRate * 100).toFixed(1), value: (d.conversionRate * 100).toFixed(1) + '%' },
                 { name: 'Capacity Utilization', key: 'capacityUtilization', raw: (d.capacityUtilization * 100).toFixed(1), value: (d.capacityUtilization * 100).toFixed(1) + '%' },
-                { name: 'Monthly Burn', key: 'monthlyBurn', raw: d.monthlyBurn, value: '
-
+                { name: 'Monthly Burn', key: 'monthlyBurn', raw: d.monthlyBurn, value: '$' + d.monthlyBurn.toLocaleString() },
+                { name: 'Runway', key: 'runway', raw: d.runwayMonths === Infinity ? 9999 : d.runwayMonths, value: d.runwayMonths === Infinity ? '> 99 mo' : d.runwayMonths.toFixed(1) + ' mo' }
             var metricsHtml = '';
             metrics.forEach(function(m) {
                 metricsHtml += '<div class="metric-item">' +
