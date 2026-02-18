@@ -719,7 +719,7 @@
             card.classList.toggle('expanded');
         }
 
-                        function buildWhySection(data) {
+                                function buildWhySection(data) {
             var d = data.derived;
             var raw = data.raw;
             var constraint = data.constraint;
@@ -737,12 +737,12 @@
 
             if (constraint.toLowerCase() === 'conversion') {
                 var currentRate = conversionRate * 100;
-                var improvedRate = Math.round(Math.min(currentRate * 1.5, 50));
-                if (improvedRate <= currentRate) improvedRate = Math.round(currentRate + 5);
+                var improvedRate = Math.round(Math.min(currentRate * 1.5, currentRate + 15, 60));
+                if (improvedRate <= currentRate) improvedRate = Math.round(Math.min(currentRate + 5, 60));
                 var currentLeads = Number(raw.leadsPerMonth) || 0;
                 var currentDeals = Math.round(currentLeads * conversionRate);
                 var newDeals = Math.round(currentLeads * (improvedRate / 100));
-                var additionalDeals = newDeals - currentDeals;
+                var additionalDeals = Math.max(newDeals - currentDeals, 0);
                 projectedGain = additionalDeals * avgDealValue;
 
                 whyHtml = '<p>You close <span style="' + (currentRate < 15 ? red : '') + '">' + currentRate.toFixed(0) + '%</span> of your leads.</p>' +
@@ -753,8 +753,10 @@
 
             } else if (constraint.toLowerCase() === 'margin') {
                 var currentMargin = grossMargin * 100;
-                var targetMargin = Math.round(currentMargin + (currentMargin < 40 ? 15 : currentMargin < 60 ? 10 : 5));
-                var marginGainPct = targetMargin - currentMargin;
+                var bump = currentMargin < 40 ? 15 : currentMargin < 60 ? 10 : 5;
+                var targetMargin = Math.round(Math.min(currentMargin + bump, 95));
+                if (targetMargin <= currentMargin) targetMargin = Math.round(Math.min(currentMargin + 3, 98));
+                var marginGainPct = Math.max(targetMargin - currentMargin, 0);
                 projectedGain = Math.round(monthlyRevenue * (marginGainPct / 100));
 
                 whyHtml = '<p>You keep <span style="' + (currentMargin < 30 ? red : '') + '">' + currentMargin.toFixed(0) +
@@ -765,29 +767,46 @@
 
             } else if (constraint.toLowerCase() === 'capacity') {
                 var currentUtil = capacityUtil * 100;
-                var targetUtil = Math.round(Math.min(currentUtil + 15, 95));
-                if (targetUtil <= currentUtil) targetUtil = Math.min(Math.round(currentUtil + 5), 100);
-                var utilGain = targetUtil - currentUtil;
-                var revenuePerPoint = monthlyRevenue / Math.max(currentUtil, 1);
-                projectedGain = Math.round(revenuePerPoint * utilGain);
+                if (currentUtil > 85) {
+                    var freeUpTarget = Math.round(Math.max(currentUtil - 15, 75));
+                    var efficiencyGain = Math.round(monthlyRevenue * 0.10);
+                    projectedGain = efficiencyGain;
 
-                whyHtml = '<p>Your team is at <span style="' + (currentUtil > 90 ? red : '') + '">' +
-                    currentUtil.toFixed(0) + '%</span> capacity.</p>' +
-                    '<p>Getting to <strong>' + targetUtil + '%</strong> = roughly ' +
-                    '<span style="' + green + '">+$' + projectedGain.toLocaleString() +
-                    '/mo</span> more output — without hiring.</p>';
+                    whyHtml = '<p>Your team is at <span style="' + red + '">' + currentUtil.toFixed(0) +
+                        '%</span> capacity — that\'s stretched thin.</p>' +
+                        '<p>Getting back to <strong>' + freeUpTarget + '%</strong> reduces errors and burnout, worth roughly ' +
+                        '<span style="' + green + '">+$' + projectedGain.toLocaleString() +
+                        '/mo</span> in recovered efficiency.</p>';
+                } else {
+                    var targetUtil = Math.round(Math.min(currentUtil + 15, 85));
+                    var utilGain = targetUtil - currentUtil;
+                    var revenuePerPoint = monthlyRevenue / Math.max(currentUtil, 1);
+                    projectedGain = Math.round(revenuePerPoint * utilGain);
+
+                    whyHtml = '<p>Your team is at <span style="' + (currentUtil < 50 ? red : '') + '">' +
+                        currentUtil.toFixed(0) + '%</span> capacity.</p>' +
+                        '<p>Getting to <strong>' + targetUtil + '%</strong> = roughly ' +
+                        '<span style="' + green + '">+$' + projectedGain.toLocaleString() +
+                        '/mo</span> more output — without hiring.</p>';
+                }
 
             } else if (constraint.toLowerCase() === 'cash flow') {
                 var daysToCollect = Number(raw.averageDaysToCollect) || 0;
-                var targetDays = Math.max(Math.round(daysToCollect * 0.6), 15);
-                var daysSaved = Math.max(daysToCollect - targetDays, 0);
-                projectedGain = Math.round((monthlyRevenue / 30) * daysSaved);
+                if (daysToCollect <= 20) {
+                    whyHtml = '<p>You collect in <strong>' + daysToCollect + ' days</strong> — that\'s healthy.</p>' +
+                        '<p>Maintaining fast collection while growing revenue keeps your cash position strong.</p>';
+                    projectedGain = 0;
+                } else {
+                    var targetDays = Math.max(Math.round(daysToCollect * 0.6), 15);
+                    var daysSaved = daysToCollect - targetDays;
+                    projectedGain = Math.round((monthlyRevenue / 30) * daysSaved);
 
-                whyHtml = '<p>You wait <span style="' + (daysToCollect > 45 ? red : '') + '">' +
-                    daysToCollect + ' days</span> to get paid.</p>' +
-                    '<p>Cutting to <strong>' + targetDays + ' days</strong> frees up ' +
-                    '<span style="' + green + '">$' + projectedGain.toLocaleString() +
-                    '</span> in cash you can use now.</p>';
+                    whyHtml = '<p>You wait <span style="' + (daysToCollect > 45 ? red : '') + '">' +
+                        daysToCollect + ' days</span> to get paid.</p>' +
+                        '<p>Cutting to <strong>' + targetDays + ' days</strong> frees up ' +
+                        '<span style="' + green + '">$' + projectedGain.toLocaleString() +
+                        '</span> in cash you can use now.</p>';
+                }
 
             } else {
                 var currentLeads = Number(raw.leadsPerMonth) || 0;
@@ -810,7 +829,7 @@
             }
 
             document.getElementById('whyContent').innerHTML = whyHtml;
-                        }
+                                }
 
 
         // --- Metric Popover ---
