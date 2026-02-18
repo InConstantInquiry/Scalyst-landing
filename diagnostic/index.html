@@ -53,6 +53,21 @@
         @media (max-width: 640px) { main { padding: 6rem 1.25rem 3rem; } h1 { font-size: 1.75rem; } }
     </style>
     <script defer data-domain="scalyst.digital" src="https://plausible.io/js/script.tagged-events.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Auth guard: redirect authenticated users to internal evaluation
+        (function() {
+            var SB_URL = 'https://raqwjzcdcfrwwnewwdke.supabase.co';
+            var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcXdqemNkY2Zyd3duZXd3ZGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5ODQ1MzAsImV4cCI6MjA4NjU2MDUzMH0.WEAZ1Kvp4wwQBL1wRJSc0T43C87u79nruU6UqJZpDoE';
+            var sbCheck = window.supabase.createClient(SB_URL, SB_KEY);
+            sbCheck.auth.getSession().then(function(res) {
+                if (res.data.session) {
+                    window.location.href = '/evaluation/';
+                }
+            });
+        })();
+    </script>
 </head>
 <body>
     <header>
