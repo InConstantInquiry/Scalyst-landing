@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scalyst &mdash; Diagnostic Results</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://nts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600;700&family=DM+Serif+Display:wght@400&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-light: #CCFFD6;
-            --secondary-light: #AFEFA7;
+            --secondary-light: #AFEFA7
             --mid-accent: #91DE78;
             --primary-accent: #3D9910;
             --primary-accent-light: #56BD1A;
@@ -697,8 +697,8 @@
             ];
             var metricsHtml = '';
             metrics.forEach(function(m) {
-                metricsHtml += '<div class="metric-item">' +
-                    '<div class="metric-name">' + m.name + '</div>' +
+                metricsHtml += '<div class="metric-item" style="position:relative;">' +
+                    '<div class="metric-name"><span class="metric-name-clickable" data-metric="' + m.key + '" data-raw="' + m.raw + '" onclick="showMetricPopover(this)">' + m.name + '</span></div>' +
                     '<div class="metric-value">' + m.value + '</div>' +
                     '</div>';
             });
