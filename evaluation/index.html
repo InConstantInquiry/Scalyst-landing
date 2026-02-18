@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scalyst &mdash; Operating Evaluation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-light: #CCFFD6;
+            --secondary-light: #AFEFA7;
+            --mid-accent: #91DE78;
+            --primary-accent: #3D9910;
+            --primary-accent-light: #56BD1A;
+            --dark-anchor: #265420;
+            --darker-anchor: #1A3814;
+            --white: #FFFFFF;
+            --near-black: #0F0F0F;
+            --neutral-900: #1A1A1A;
+            --neutral-700: #404040;
+            --neutral-500: #737373;
+            --neutral-200: #E5E5E5;
+            --neutral-100: #F5F5F5;
+            --font-display: 'IBM Plex Sans', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+            --font-serif: 'DM Serif Display', serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-display); color: var(--neutral-900); line-height: 1.6; background: var(--neutral-100); }
+
+        header { position: fixed; top: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); z-index: 100; border-bottom: 1px solid var(--neutral-200); }
+        .header-content { max-width: 720px; margin: 0 auto; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo-text { font-family: var(--font-serif); font-size: 1.5rem; color: var(--near-black); text-decoration: none; }
+        .back-link { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--neutral-500); text-decoration: none; }
+        .back-link:hover { color: var(--neutral-700); }
+
+        main { max-width: 720px; margin: 0 auto; padding: 7rem 2rem 5rem; }
+
+        .page-badge { display: inline-block; font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dark-anchor); background: var(--primary-light); padding: 0.375rem 0.75rem; border-radius: 2px; margin-bottom: 1.5rem; }
+        h1 { font-size: 2rem; font-weight: 700; line-height: 1.15; color: var(--near-black); margin-bottom: 0.75rem; }
+        .page-description { font-size: 1rem; color: var(--neutral-500); margin-bottom: 2.5rem; max-width: 540px; }
+
+        .loading-state { text-align: center; padding: 4rem 0; color: var(--neutral-500); font-family: var(--font-mono); font-size: 0.875rem; }
+
+        .previous-constraint { background: var(--white); border: 1.5px solid var(--neutral-200); border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; }
+        .previous-constraint-label { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--neutral-500); margin-bottom: 0.25rem; }
+        .previous-constraint-value { font-size: 1.25rem; font-weight: 700; color: var(--near-black); }
+
+        .form-section { background: var(--white); border: 1.5px solid var(--neutral-200); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; }
+        .form-section-title { font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--neutral-500); margin-bottom: 1rem; }
+
+        .field-group { margin-bottom: 1.25rem; }
+        .field-group:last-child { margin-bottom: 0; }
+        .field-label { display: block; font-size: 0.875rem; font-weight: 600; color: var(--neutral-900); margin-bottom: 0.25rem; }
+        .field-hint { font-family: var(--font-mono); font-size: 0.75rem; color: var(--neutral-500); margin-bottom: 0.375rem; }
+        .field-previous { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--primary-accent); margin-bottom: 0.375rem; }
+        .field-input { width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--neutral-200); border-radius: 6px; font-family: var(--font-display); font-size: 0.9375rem; color: var(--neutral-900); background: var(--white); transition: border-color 0.15s; }
+        .field-input:focus { outline: none; border-color: var(--primary-accent); }
+        .field-input.error { border-color: #C0392B; }
+
+        .submit-btn { display: block; width: 100%; padding: 1rem; background: var(--near-black); color: var(--white); font-family: var(--font-display); font-size: 1rem; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; margin-top: 2rem; }
+        .submit-btn:hover { background: var(--neutral-700); }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .form-note { text-align: center; font-family: var(--font-mono); font-size: 0.75rem; color: var(--neutral-500); margin-top: 0.75rem; }
+
+        .error-msg { background: #FDEDEC; border: 1px solid #E74C3C; border-radius: 6px; padding: 0.75rem 1rem; color: #C0392B; font-size: 0.875rem; margin-bottom: 1.5rem; display: none; }
+
+        @media (max-width: 640px) {
+            main { padding: 6rem 1.25rem 3rem; }
+            h1 { font-size: 1.75rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="/dashboard/" class="logo-text">Scalyst</a>
+            <a href="/dashboard/" class="back-link">&larr; Back to Dashboard</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="loading-state" id="loadingState">Loading your evaluation&hellip;</div>
+
+        <div id="evaluationContent" style="display:none;">
+            <div class="page-badge">Operating Evaluation</div>
+            <h1>Update your numbers.</h1>
+            <p class="page-description">Your previous metrics are loaded below. Update any fields that have changed, then submit to run a new constraint evaluation.</p>
+
+            <div class="previous-constraint" id="prevConstraintCard">
+                <div class="previous-constraint-label">Previous Constraint</div>
+                <div class="previous-constraint-value" id="prevConstraintName">&mdash;</div>
+            </div>
+
+            <div class="error-msg" id="errorMsg"></div>
+
+            <form id="evaluationForm">
+                <div class="form-section">
+                    <div class="form-section-title">Revenue &amp; Costs</div>
+                    <div class="field-group">
+                        <label class="field-label" for="monthlyRevenue">Monthly Revenue</label>
+                        <div class="field-previous" id="prev-monthlyRevenue"></div>
+                        <input type="number" class="field-input" id="monthlyRevenue" name="monthlyRevenue" min="0" step="any" required>
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="costOfDelivery">Cost of Delivery</label>
+                        <div class="field-previous" id="prev-costOfDelivery"></div>
+                        <input type="number" class="field-input" id="costOfDelivery" name="costOfDelivery" min="0" step="any" required>
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="fixedExpenses">Fixed Monthly Expenses</label>
+                        <div class="field-previous" id="prev-fixedExpenses"></div>
+                        <input type="number" class="field-input" id="fixedExpenses" name="fixedExpenses" min="0" step="any" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">Sales &amp; Pipeline</div>
+                    <div class="field-group">
+                        <label class="field-label" for="leadsPerMonth">Leads per Month</label>
+                        <div class="field-previous" id="prev-leadsPerMonth"></div>
+                        <input type="number" class="field-input" id="leadsPerMonth" name="leadsPerMonth" min="0" step="any" required>
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="dealsClosedPerMonth">Deals Closed per Month</label>
+                        <div class="field-previous" id="prev-dealsClosedPerMonth"></div>
+                        <input type="number" class="field-input" id="dealsClosedPerMonth" name="dealsClosedPerMonth" min="0" step="any" required>
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="averageDealValue">Average Deal Value</label>
+                        <div class="field-previous" id="prev-averageDealValue"></div>
+                        <input type="number" class="field-input" id="averageDealValue" name="averageDealValue" min="0" step="any" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">Capacity &amp; Operations</div>
+                    <div class="field-group">
+                        <label class="field-label" for="maxCapacityPerMonth">Max Capacity per Month</label>
+                        <div class="field-hint">Units, clients, or projects you can handle at full capacity</div>
+                        <div class="field-previous" id="prev-maxCapacityPerMonth"></div>
+                        <input type="number" class="field-input" id="maxCapacityPerMonth" name="maxCapacityPerMonth" min="1" step="any" required>
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="currentOutputPerMonth">Current Output per Month</label>
+                        <div class="field-previous" id="prev-currentOutputPerMonth"></div>
+                        <input type="number" class="field-input" id="currentOutputPerMonth" name="currentOutputPerMonth" min="0" step="any" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">Cash Position</div>
+                    <div class="field-group">
+                        <label class="field-label" for="cashOnHand">Cash on Hand</label>
+                        <div class="field-previous" id="prev-cashOnHand"></div>
+                        <input type="number" class="field-input" id="cashOnHand" name="cashOnHand" min="0" step="any" required>
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="averageDaysToCollect">Average Days to Collect</label>
+                        <div class="field-previous" id="prev-averageDaysToCollect"></div>
+                        <input type="number" class="field-input" id="averageDaysToCollect" name="averageDaysToCollect" min="0" step="any" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">Run Re-Evaluation</button>
+                <p class="form-note">This creates a new snapshot. Your previous data is preserved.</p>
+            </form>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/lib/constraintLogic.js"></script>
+    <script>
+        var SUPABASE_URL = 'https://raqwjzcdcfrwwnewwdke.supabase.co';
+        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcXdqemNkY2Zyd3duZXd3ZGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5ODQ1MzAsImV4cCI6MjA4NjU2MDUzMH0.WEAZ1Kvp4wwQBL1wRJSc0T43C87u79nruU6UqJZpDoE';
+        var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        var currentUser = null;
+        var currentBusinessId = null;
+        var latestSnapshot = null;
+        
+        // Predefined action sets per constraint (same as dashboard)
+        var CONSTRAINT_ACTIONS = {
+            'conversion': [
+                { action_key: 'audit_funnel', title: 'Audit Sales Funnel', description: 'Map every step from lead to close. Identify where prospects drop off.', success_metric: 'Documented funnel with drop-off rates per stage', sequence_order: 1 },
+                { action_key: 'standardize_followup', title: 'Standardize Follow-Up', description: 'Create a repeatable follow-up sequence with defined timing and messaging.', success_metric: 'Follow-up sequence documented and adopted by team', sequence_order: 2 },
+                { action_key: 'delay_paid_acquisition', title: 'Delay Paid Acquisition Increase', description: 'Do not increase ad spend until conversion rate improves. Fix the leak before adding water.', success_metric: 'Conversion rate improved before scaling spend', sequence_order: 3 }
+            ],
+            'margin': [
+                { action_key: 'cost_audit', title: 'Audit Cost of Delivery', description: 'Break down every cost that goes into delivering your product or service.', success_metric: 'Line-item cost breakdown documented', sequence_order: 1 },
+                { action_key: 'reprice_offerings', title: 'Reprice or Repackage Offerings', description: 'Identify if pricing is below market or if low-margin services can be bundled differently.', success_metric: 'Revised pricing implemented on at least one offering', sequence_order: 2 },
+                { action_key: 'cut_low_margin', title: 'Cut or Restructure Low-Margin Work', description: 'Eliminate or renegotiate engagements that drag overall margin down.', success_metric: 'Gross margin improved by at least 3 points', sequence_order: 3 }
+            ],
+            'capacity': [
+                { action_key: 'map_bottlenecks', title: 'Map Capacity Bottlenecks', description: 'Identify which roles, processes, or resources are at or above capacity.', success_metric: 'Bottleneck map with utilization rates per resource', sequence_order: 1 },
+                { action_key: 'automate_or_delegate', title: 'Automate or Delegate Low-Value Tasks', description: 'Free up capacity by removing tasks that do not require senior attention.', success_metric: 'At least 5 hours/week freed per constrained resource', sequence_order: 2 },
+                { action_key: 'add_capacity', title: 'Add Targeted Capacity', description: 'Hire, contract, or outsource specifically for the bottleneck identified in Step 1.', success_metric: 'Utilization back below 85% for constrained resources', sequence_order: 3 }
+            ],
+            'cash flow': [
+                { action_key: 'accelerate_collections', title: 'Accelerate Collections', description: 'Tighten payment terms, send invoices immediately, and follow up on aging receivables.', success_metric: 'Average days to collect reduced by at least 10 days', sequence_order: 1 },
+                { action_key: 'restructure_payment_terms', title: 'Restructure Payment Terms', description: 'Move to deposits, milestone billing, or retainers to front-load cash.', success_metric: 'At least 50% of new contracts on improved terms', sequence_order: 2 },
+                { action_key: 'build_cash_reserve', title: 'Build Cash Reserve', description: 'Set aside a fixed percentage of revenue monthly until runway exceeds 3 months.', success_metric: 'Cash runway exceeds 3 months of operating expenses', sequence_order: 3 }
+            ],
+            'lead volume': [
+                { action_key: 'identify_best_channel', title: 'Identify Best-Performing Channel', description: 'Determine which channel currently produces the highest quality leads at lowest cost.', success_metric: 'Top channel identified with cost-per-lead documented', sequence_order: 1 },
+                { action_key: 'double_down_channel', title: 'Double Down on Top Channel', description: 'Increase investment in the proven channel before experimenting with new ones.', success_metric: 'Lead volume from top channel increased by 50%', sequence_order: 2 },
+                { action_key: 'add_secondary_channel', title: 'Add One Secondary Channel', description: 'Only after primary channel is scaled, test one additional channel methodically.', success_metric: 'Secondary channel producing measurable leads within 60 days', sequence_order: 3 }
+            ]
+        };
+
+        // Auth guard
+        sb.auth.getSession().then(function(res) {
+            if (!res.data.session) {
+                window.location.href = '/auth/?redirect=/evaluation/';
+                return;
+            }
+            currentUser = res.data.session.user;
+            loadEvaluationPage(currentUser);
+        });
+
+        function loadEvaluationPage(user) {
+            sb.from('business_profiles')
+                .select('id')
+                .eq('user_id', user.id)
+                .single()
+                .then(function(res) {
+                    if (res.error || !res.data) {
+                        document.getElementById('loadingState').textContent = 'No business profile found. Please run the diagnostic first.';
+                        return;
+                    }
+                    currentBusinessId = res.data.id;
+                    loadLatestSnapshot(res.data.id);
+                });
+        }
+
+        function loadLatestSnapshot(businessId) {
+            sb.from('constraint_snapshots')
+                .select('*')
+                .eq('business_id', businessId)
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .single()
+                .then(function(res) {
+                    if (res.error || !res.data) {
+                        document.getElementById('loadingState').textContent = 'No previous evaluation found. Please run the diagnostic first.';
+                        return;
+                    }
+                    latestSnapshot = res.data;
+                    prefillForm(res.data);
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('evaluationContent').style.display = 'block';
+                });
+        }
+
+        function formatNumber(val) {
+            if (val === null || val === undefined) return '';
+            var num = Number(val);
+            if (isNaN(num)) return '';
+            return num.toLocaleString('en-US');
+        }
+
+        function prefillForm(snapshot) {
+            var fields = [
+                'monthlyRevenue', 'costOfDelivery', 'fixedExpenses',
+                'leadsPerMonth', 'dealsClosedPerMonth', 'averageDealValue',
+                'maxCapacityPerMonth', 'currentOutputPerMonth',
+                'cashOnHand', 'averageDaysToCollect'
+            ];
+
+            fields.forEach(function(field) {
+                var input = document.getElementById(field);
+                var prevEl = document.getElementById('prev-' + field);
+                var snapshotKey = field.replace(/([A-Z])/g, '_$1').toLowerCase();
+                var val = snapshot[snapshotKey] !== undefined ? snapshot[snapshotKey] : snapshot[field];
+
+                if (val !== null && val !== undefined) {
+                    input.value = val;
+                    var dollarFields = ['monthlyRevenue', 'costOfDelivery', 'fixedExpenses', 'averageDealValue', 'cashOnHand'];
+                    var prefix = dollarFields.indexOf(field) !== -1 ? '$' : '';
+                    prevEl.textContent = 'Previous: ' + prefix + formatNumber(val);
+                }
+            });
+
+            document.getElementById('prevConstraintName').textContent = snapshot.primary_constraint || '\u2014';
+        }
+
+        // Form submission
+        document.getElementById('evaluationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            var fields = document.querySelectorAll('.field-input');
+            var hasError = false;
+            fields.forEach(function(f) {
+                f.classList.remove('error');
+                if (!f.value || Number(f.value) < 0) {
+                    f.classList.add('error');
+                    hasError = true;
+                }
+            });
+
+            if (hasError) {
+                var errMsg = document.getElementById('errorMsg');
+                errMsg.textContent = 'Please fill in all fields with valid numbers.';
+                errMsg.style.display = 'block';
+                return;
+            }
+
+            document.getElementById('errorMsg').style.display = 'none';
+            var btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+
+            var raw = {
+                monthlyRevenue: document.getElementById('monthlyRevenue').value,
+                costOfDelivery: document.getElementById('costOfDelivery').value,
+                fixedExpenses: document.getElementById('fixedExpenses').value,
+                leadsPerMonth: document.getElementById('leadsPerMonth').value,
+                dealsClosedPerMonth: document.getElementById('dealsClosedPerMonth').value,
+                averageDealValue: document.getElementById('averageDealValue').value,
+                maxCapacityPerMonth: document.getElementById('maxCapacityPerMonth').value,
+                currentOutputPerMonth: document.getElementById('currentOutputPerMonth').value,
+                cashOnHand: document.getElementById('cashOnHand').value,
+                averageDaysToCollect: document.getElementById('averageDaysToCollect').value
+            };
+
+            var result = determineConstraint(raw);
+
+            var snapshotRow = {
+                business_id: currentBusinessId,
+                monthly_revenue: Number(raw.monthlyRevenue),
+                cost_of_delivery: Number(raw.costOfDelivery),
+                fixed_expenses: Number(raw.fixedExpenses),
+                leads_per_month: Number(raw.leadsPerMonth),
+                deals_closed_per_month: Number(raw.dealsClosedPerMonth),
+                average_deal_value: Number(raw.averageDealValue),
+                max_capacity_per_month: Number(raw.maxCapacityPerMonth),
+                current_output_per_month: Number(raw.currentOutputPerMonth),
+                cash_on_hand: Number(raw.cashOnHand),
+                average_days_to_collect: Number(raw.averageDaysToCollect),
+                gross_margin: result.derived.grossMargin,
+                net_profit: result.derived.netProfit,
+                net_margin: result.derived.netMargin,
+                conversion_rate: result.derived.conversionRate,
+                capacity_utilization: result.derived.capacityUtilization,
+                monthly_burn: result.derived.monthlyBurn,
+                runway_months: result.derived.runwayMonths === Infinity ? 999 : result.derived.runwayMonths,
+                primary_constraint: result.constraint
+            };
+
+            sb.from('constraint_snapshots')
+                .insert(snapshotRow)
+                .select()
+                .single()
+                .then(function(res) {
+                    if (res.error) {
+                        console.error('Error inserting snapshot:', res.error);
+                        btn.disabled = false;
+                        btn.textContent = 'Run Re-Evaluation';
+                        var errMsg = document.getElementById('errorMsg');
+                        errMsg.textContent = 'Error saving evaluation. Please try again.';
+                        errMsg.style.display = 'block';
+                        return;
+                    }
+
+                    var newSnapshot = res.data;
+                    generateActionsForSnapshot(newSnapshot, currentUser.id);
+                });
+        });
+
+        function generateActionsForSnapshot(snapshot, userId) {
+            var constraintKey = snapshot.primary_constraint.toLowerCase();
+            var actionSet = CONSTRAINT_ACTIONS[constraintKey];
+
+            if (!actionSet) {
+                console.warn('No predefined actions for constraint:', constraintKey);
+                logResolutionEvent(snapshot.id, userId);
+                return;
+            }
+
+            var rows = actionSet.map(function(a) {
+                return {
+                    user_id: userId,
+                    snapshot_id: snapshot.id,
+                    action_key: a.action_key,
+                    title: a.title,
+                    description: a.description,
+                    success_metric: a.success_metric,
+                    sequence_order: a.sequence_order,
+                    status: 'not_started'
+                };
+            });
+
+            sb.from('constraint_actions')
+                .insert(rows)
+                .then(function(res) {
+                    if (res.error) {
+                        console.error('Error generating actions:', res.error);
+                    }
+                    logResolutionEvent(snapshot.id, userId);
+                });
+        }
+
+        function logResolutionEvent(snapshotId, userId) {
+            sb.from('constraint_events')
+                .insert({
+                    user_id: userId,
+                    snapshot_id: latestSnapshot.id,
+                    event_type: 'constraint_resolved'
+                })
+                .then(function(res) {
+                    if (res.error) {
+                        console.error('Error logging resolution event:', res.error);
+                    }
+                    window.location.href = '/dashboard/';
+                });
+        }
+    </script>
+</body>
+</html>
