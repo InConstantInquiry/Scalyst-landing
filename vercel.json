@@ -1,24 +1,28 @@
 {
     "redirects": [
-          { "source": "/dashboard", "destination": "https://app.scalyst.digital/dashboard", "permanent": false },
-          { "source": "/dashboard/:path*", "destination": "https://app.scalyst.digital/dashboard/:path*", "permanent": false },
-          { "source": "/login", "destination": "https://app.scalyst.digital/login", "permanent": false },
-          { "source": "/login/:path*", "destination": "https://app.scalyst.digital/login/:path*", "permanent": false },
-          { "source": "/simulator", "destination": "https://app.scalyst.digital/simulator", "permanent": false },
-          { "source": "/simulator/:path*", "destination": "https://app.scalyst.digital/simulator/:path*", "permanent": false },
-          { "source": "/auth/callback", "destination": "https://app.scalyst.digital/auth/callback", "permanent": false },
-          { "source": "/signup", "destination": "https://app.scalyst.digital/signup", "permanent": false }
+        { "source": "/dashboard", "destination": "https://app.scalyst.digital/dashboard", "permanent": false },
+        { "source": "/dashboard/", "destination": "https://app.scalyst.digital/dashboard", "permanent": false },
+        { "source": "/dashboard/:path*", "destination": "https://app.scalyst.digital/dashboard/:path*", "permanent": false },
+        { "source": "/auth/", "destination": "https://app.scalyst.digital/login", "permanent": false },
+        { "source": "/auth", "destination": "https://app.scalyst.digital/login", "permanent": false },
+        { "source": "/auth/:path*", "destination": "https://app.scalyst.digital/login", "permanent": false },
+        { "source": "/login", "destination": "https://app.scalyst.digital/login", "permanent": false },
+        { "source": "/login/:path*", "destination": "https://app.scalyst.digital/login/:path*", "permanent": false },
+        { "source": "/simulator", "destination": "https://app.scalyst.digital/simulator", "permanent": false },
+        { "source": "/simulator/:path*", "destination": "https://app.scalyst.digital/simulator/:path*", "permanent": false },
+        { "source": "/auth/callback", "destination": "https://app.scalyst.digital/auth/callback", "permanent": false },
+        { "source": "/signup", "destination": "https://app.scalyst.digital/signup", "permanent": false }
     ],
     "rewrites": [
-          { "source": "/api/analytics", "destination": "/api/analytics.js" }
+        { "source": "/api/analytics", "destination": "/api/analytics.js" }
     ],
     "headers": [
-          {
-                  "source": "/evaluation/(.*)",
-                  "headers": [
-                            { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
-                            { "key": "Cache-Control", "value": "no-store" }
-                  ]
-          }
+        {
+            "source": "/evaluation/(.*)",
+            "headers": [
+                { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+                { "key": "Cache-Control", "value": "no-store" }
+            ]
+        }
     ]
 }
