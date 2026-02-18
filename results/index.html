@@ -696,10 +696,16 @@
                 { name: 'Runway', key: 'runway', raw: d.runwayMonths === Infinity ? 9999 : d.runwayMonths, value: d.runwayMonths === Infinity ? '> 99 mo' : d.runwayMonths.toFixed(1) + ' mo' }
             ];
             var metricsHtml = '';
-            metrics.forEach(function(m) {
+                        metrics.forEach(function(m) {
+                var isPoor = (m.key === 'grossMargin' && d.grossMargin < 0.30) ||
+                             (m.key === 'netMargin' && d.netMargin < 0.05) ||
+                             (m.key === 'conversionRate' && d.conversionRate < 0.08) ||
+                             (m.key === 'capacityUtilization' && d.capacityUtilization > 0.90) ||
+                             (m.key === 'runway' && d.runwayMonths < 6);
+                var valStyle = isPoor ? ' style="color:#dc3545"' : '';
                 metricsHtml += '<div class="metric-item" style="position:relative;">' +
                     '<div class="metric-name"><span class="metric-name-clickable" data-metric="' + m.key + '" data-raw="' + m.raw + '" onclick="showMetricPopover(this)">' + m.name + '</span></div>' +
-                    '<div class="metric-value">' + m.value + '</div>' +
+                    '<div class="metric-value"' + valStyle + '>' + m.value + '</div>' +
                     '</div>';
             });
             document.getElementById('metricsGrid').innerHTML = metricsHtml;
@@ -713,7 +719,7 @@
             card.classList.toggle('expanded');
         }
 
-                function buildWhySection(data) {
+                        function buildWhySection(data) {
             var d = data.derived;
             var raw = data.raw;
             var constraint = data.constraint;
@@ -726,60 +732,62 @@
             var avgDealValue = Number(raw.averageDealValue) || (dealsPerMonth > 0 ? Math.round(monthlyRevenue / dealsPerMonth) : 0);
             var whyHtml = '';
             var projectedGain = 0;
+            var red = 'color:#dc3545;font-weight:bold';
+            var green = 'color:#28a745;font-weight:bold';
 
             if (constraint.toLowerCase() === 'conversion') {
                 var currentRate = conversionRate * 100;
-                var improvedRate = Math.min(currentRate * 1.5, 100);
+                var improvedRate = Math.round(Math.min(currentRate * 1.5, 50));
+                if (improvedRate <= currentRate) improvedRate = Math.round(currentRate + 5);
                 var currentLeads = Number(raw.leadsPerMonth) || 0;
                 var currentDeals = Math.round(currentLeads * conversionRate);
                 var newDeals = Math.round(currentLeads * (improvedRate / 100));
                 var additionalDeals = newDeals - currentDeals;
                 projectedGain = additionalDeals * avgDealValue;
 
-                whyHtml = '<p>Your close rate is <strong>' + currentRate.toFixed(1) + '%</strong>. ' +
-                    'Improving it to <strong>' + improvedRate.toFixed(1) + '%</strong> with the same ' +
-                    currentLeads + ' leads/mo means closing <strong>' + additionalDeals +
-                    ' more deal' + (additionalDeals !== 1 ? 's' : '') + ' per month</strong>.</p>' +
-                    '<p>At <strong>$' + avgDealValue.toLocaleString() + '</strong> per deal, that\'s ' +
-                    '<strong>$' + Math.round(projectedGain).toLocaleString() + '/mo</strong> in new revenue — ' +
-                    'without spending more on lead generation.</p>';
+                whyHtml = '<p>You close <span style="' + (currentRate < 15 ? red : '') + '">' + currentRate.toFixed(0) + '%</span> of your leads.</p>' +
+                    '<p>Moving that to <strong>' + improvedRate + '%</strong> = <strong>' + additionalDeals +
+                    ' extra deal' + (additionalDeals !== 1 ? 's' : '') + '/mo</strong></p>' +
+                    '<p>That\'s <span style="' + green + '">+$' + Math.round(projectedGain).toLocaleString() +
+                    '/mo</span> in new revenue without spending more on marketing.</p>';
 
             } else if (constraint.toLowerCase() === 'margin') {
                 var currentMargin = grossMargin * 100;
-                var targetMargin = Math.min(currentMargin + 15, 80);
+                var targetMargin = Math.round(currentMargin + (currentMargin < 40 ? 15 : currentMargin < 60 ? 10 : 5));
                 var marginGainPct = targetMargin - currentMargin;
                 projectedGain = Math.round(monthlyRevenue * (marginGainPct / 100));
 
-                whyHtml = '<p>Your gross margin is <strong>' + currentMargin.toFixed(1) + '%</strong>. ' +
-                    'Raising it to <strong>' + targetMargin.toFixed(1) + '%</strong> means keeping an extra ' +
-                    '<strong>$' + projectedGain.toLocaleString() + '/mo</strong> from the same revenue.</p>' +
-                    '<p>On $' + monthlyRevenue.toLocaleString() + '/mo in revenue, every margin point is worth ' +
-                    '<strong>$' + Math.round(monthlyRevenue / 100).toLocaleString() + '/mo</strong> straight to your bottom line.</p>';
+                whyHtml = '<p>You keep <span style="' + (currentMargin < 30 ? red : '') + '">' + currentMargin.toFixed(0) +
+                    '%</span> of every dollar as gross profit.</p>' +
+                    '<p>Improving to <strong>' + targetMargin + '%</strong> puts an extra ' +
+                    '<span style="' + green + '">+$' + projectedGain.toLocaleString() +
+                    '/mo</span> in your pocket — same revenue, more profit.</p>';
 
             } else if (constraint.toLowerCase() === 'capacity') {
                 var currentUtil = capacityUtil * 100;
-                var targetUtil = Math.min(currentUtil + 20, 95);
+                var targetUtil = Math.round(Math.min(currentUtil + 15, 95));
+                if (targetUtil <= currentUtil) targetUtil = Math.min(Math.round(currentUtil + 5), 100);
                 var utilGain = targetUtil - currentUtil;
                 var revenuePerPoint = monthlyRevenue / Math.max(currentUtil, 1);
                 projectedGain = Math.round(revenuePerPoint * utilGain);
 
-                whyHtml = '<p>You\'re operating at <strong>' + currentUtil.toFixed(0) + '%</strong> capacity. ' +
-                    'Reaching <strong>' + targetUtil.toFixed(0) + '%</strong> unlocks roughly ' +
-                    '<strong>$' + projectedGain.toLocaleString() + '/mo</strong> in additional throughput.</p>' +
-                    '<p>That\'s ' + utilGain.toFixed(0) + ' points of capacity — the equivalent of scaling revenue ' +
-                    'without adding headcount or overhead.</p>';
+                whyHtml = '<p>Your team is at <span style="' + (currentUtil > 90 ? red : '') + '">' +
+                    currentUtil.toFixed(0) + '%</span> capacity.</p>' +
+                    '<p>Getting to <strong>' + targetUtil + '%</strong> = roughly ' +
+                    '<span style="' + green + '">+$' + projectedGain.toLocaleString() +
+                    '/mo</span> more output — without hiring.</p>';
 
             } else if (constraint.toLowerCase() === 'cash flow') {
                 var daysToCollect = Number(raw.averageDaysToCollect) || 0;
-                var targetDays = 30;
+                var targetDays = Math.max(Math.round(daysToCollect * 0.6), 15);
                 var daysSaved = Math.max(daysToCollect - targetDays, 0);
                 projectedGain = Math.round((monthlyRevenue / 30) * daysSaved);
 
-                whyHtml = '<p>You\'re collecting in <strong>' + daysToCollect + ' days</strong>. ' +
-                    'Cutting to <strong>' + targetDays + ' days</strong> frees up ' +
-                    '<strong>$' + projectedGain.toLocaleString() + '</strong> in working capital.</p>' +
-                    '<p>Faster collection means less borrowing, more flexibility, and the ability ' +
-                    'to reinvest in growth sooner.</p>';
+                whyHtml = '<p>You wait <span style="' + (daysToCollect > 45 ? red : '') + '">' +
+                    daysToCollect + ' days</span> to get paid.</p>' +
+                    '<p>Cutting to <strong>' + targetDays + ' days</strong> frees up ' +
+                    '<span style="' + green + '">$' + projectedGain.toLocaleString() +
+                    '</span> in cash you can use now.</p>';
 
             } else {
                 var currentLeads = Number(raw.leadsPerMonth) || 0;
@@ -787,23 +795,22 @@
                 var additionalDealsLV = Math.round((targetLeads - currentLeads) * conversionRate);
                 projectedGain = additionalDealsLV * avgDealValue;
 
-                whyHtml = '<p>You\'re generating <strong>' + currentLeads + ' leads/mo</strong>. ' +
-                    'Scaling to <strong>' + targetLeads + '</strong> at your ' +
-                    '<strong>' + (conversionRate * 100).toFixed(1) + '%</strong> close rate adds ' +
-                    '<strong>' + additionalDealsLV + ' deal' + (additionalDealsLV !== 1 ? 's' : '') + '/mo</strong>.</p>' +
-                    '<p>At <strong>$' + avgDealValue.toLocaleString() + '</strong> per deal, that\'s ' +
-                    '<strong>$' + Math.round(projectedGain).toLocaleString() + '/mo</strong> in new revenue.</p>';
+                whyHtml = '<p>You get <strong>' + currentLeads + ' leads/mo</strong>.</p>' +
+                    '<p>Scaling to <strong>' + targetLeads + '</strong> at your current close rate = ' +
+                    '<strong>' + additionalDealsLV + ' more deal' + (additionalDealsLV !== 1 ? 's' : '') + '/mo</strong></p>' +
+                    '<p>That\'s <span style="' + green + '">+$' + Math.round(projectedGain).toLocaleString() +
+                    '/mo</span> in new revenue.</p>';
             }
 
             if (projectedGain > 0) {
                 whyHtml += '<div class="why-highlight">' +
                     '<div class="why-highlight-number">+$' + Math.round(projectedGain).toLocaleString() + '/mo</div>' +
-                    '<div class="why-highlight-label">Projected monthly impact from resolving this constraint</div>' +
+                    '<div class="why-highlight-label">Projected monthly impact</div>' +
                     '</div>';
             }
 
             document.getElementById('whyContent').innerHTML = whyHtml;
-                }
+                        }
 
 
         // --- Metric Popover ---
