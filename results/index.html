@@ -713,72 +713,86 @@
             card.classList.toggle('expanded');
         }
 
-        function buildWhySection(data) {
+                function buildWhySection(data) {
             var d = data.derived;
             var raw = data.raw;
             var constraint = data.constraint;
 
             var monthlyRevenue = Number(raw.monthlyRevenue) || 0;
-            var conversionRate = d.conversionRate;
-            var grossMargin = d.grossMargin;
-            var capacityUtil = d.capacityUtilization;
-            var dealsPerMonth = Number(raw.dealsClosedPerMonth) || 0;
-            var avgDealValue = Number(raw.averageDealValue) || 0;
-
+            var conversionRate = d.conversionRate || 0;
+            var grossMargin = d.grossMargin || 0;
+            var capacityUtil = d.capacityUtilization || 0;
+            var dealsPerMonth = Number(raw.dealsPerMonth) || 0;
+            var avgDealValue = Number(raw.averageDealValue) || (dealsPerMonth > 0 ? Math.round(monthlyRevenue / dealsPerMonth) : 0);
             var whyHtml = '';
             var projectedGain = 0;
 
-            if (constraint === 'Conversion') {
-                var currentRate = conversionRate;
-                var targetRate = Math.min(currentRate + 0.10, 0.35);
-                var additionalDeals = Math.round((targetRate - currentRate) * Number(raw.leadsPerMonth));
+            if (constraint.toLowerCase() === 'conversion') {
+                var currentRate = conversionRate * 100;
+                var improvedRate = Math.min(currentRate * 1.5, 100);
+                var currentLeads = Number(raw.leadsPerMonth) || 0;
+                var currentDeals = Math.round(currentLeads * conversionRate);
+                var newDeals = Math.round(currentLeads * (improvedRate / 100));
+                var additionalDeals = newDeals - currentDeals;
                 projectedGain = additionalDeals * avgDealValue;
 
-                whyHtml = '<p>Your conversion rate is ' + (currentRate * 100).toFixed(1) + '%. ' +
-                    'If you improve it to ' + (targetRate * 100).toFixed(0) + '%, that\'s ' +
-                    additionalDeals + ' additional deal' + (additionalDeals !== 1 ? 's' : '') +
-                    ' per month at $' + avgDealValue.toLocaleString() + ' average value.</p>';
+                whyHtml = '<p>Your close rate is <strong>' + currentRate.toFixed(1) + '%</strong>. ' +
+                    'Improving it to <strong>' + improvedRate.toFixed(1) + '%</strong> with the same ' +
+                    currentLeads + ' leads/mo means closing <strong>' + additionalDeals +
+                    ' more deal' + (additionalDeals !== 1 ? 's' : '') + ' per month</strong>.</p>' +
+                    '<p>At <strong>$' + avgDealValue.toLocaleString() + '</strong> per deal, that\'s ' +
+                    '<strong>$' + Math.round(projectedGain).toLocaleString() + '/mo</strong> in new revenue — ' +
+                    'without spending more on lead generation.</p>';
 
-            } else if (constraint === 'Margin') {
-                var currentMargin = grossMargin;
-                var targetMargin = Math.min(currentMargin + 0.10, 0.55);
-                projectedGain = monthlyRevenue * (targetMargin - currentMargin);
+            } else if (constraint.toLowerCase() === 'margin') {
+                var currentMargin = grossMargin * 100;
+                var targetMargin = Math.min(currentMargin + 15, 80);
+                var marginGainPct = targetMargin - currentMargin;
+                projectedGain = Math.round(monthlyRevenue * (marginGainPct / 100));
 
-                whyHtml = '<p>Your gross margin is ' + (currentMargin * 100).toFixed(1) + '%. ' +
-                    'Moving it to ' + (targetMargin * 100).toFixed(0) + '% adds $' +
-                    Math.round(projectedGain).toLocaleString() + '/mo in retained profit  without closing a single new deal.</p>';
+                whyHtml = '<p>Your gross margin is <strong>' + currentMargin.toFixed(1) + '%</strong>. ' +
+                    'Raising it to <strong>' + targetMargin.toFixed(1) + '%</strong> means keeping an extra ' +
+                    '<strong>$' + projectedGain.toLocaleString() + '/mo</strong> from the same revenue.</p>' +
+                    '<p>On $' + monthlyRevenue.toLocaleString() + '/mo in revenue, every margin point is worth ' +
+                    '<strong>$' + Math.round(monthlyRevenue / 100).toLocaleString() + '/mo</strong> straight to your bottom line.</p>';
 
-            } else if (constraint === 'Capacity') {
-                var maxCap = Number(raw.maxCapacityPerMonth) || 1;
-                var currentOutput = Number(raw.currentOutputPerMonth) || 0;
-                var headroom = Math.round(maxCap * 0.20);
-                projectedGain = headroom * avgDealValue;
+            } else if (constraint.toLowerCase() === 'capacity') {
+                var currentUtil = capacityUtil * 100;
+                var targetUtil = Math.min(currentUtil + 20, 95);
+                var utilGain = targetUtil - currentUtil;
+                var revenuePerPoint = monthlyRevenue / Math.max(currentUtil, 1);
+                projectedGain = Math.round(revenuePerPoint * utilGain);
 
-                whyHtml = '<p>You\'re running at ' + (capacityUtil * 100).toFixed(0) + '% capacity. ' +
-                    'Freeing up ' + headroom + ' units/mo of throughput means $' +
-                    Math.round(projectedGain).toLocaleString() + '/mo in additional revenue capacity.</p>';
+                whyHtml = '<p>You\'re operating at <strong>' + currentUtil.toFixed(0) + '%</strong> capacity. ' +
+                    'Reaching <strong>' + targetUtil.toFixed(0) + '%</strong> unlocks roughly ' +
+                    '<strong>$' + projectedGain.toLocaleString() + '/mo</strong> in additional throughput.</p>' +
+                    '<p>That\'s ' + utilGain.toFixed(0) + ' points of capacity — the equivalent of scaling revenue ' +
+                    'without adding headcount or overhead.</p>';
 
-            } else if (constraint === 'Cash Flow') {
+            } else if (constraint.toLowerCase() === 'cash flow') {
                 var daysToCollect = Number(raw.averageDaysToCollect) || 0;
                 var targetDays = 30;
                 var daysSaved = Math.max(daysToCollect - targetDays, 0);
-                projectedGain = (monthlyRevenue / 30) * daysSaved;
+                projectedGain = Math.round((monthlyRevenue / 30) * daysSaved);
 
-                whyHtml = '<p>You\'re collecting in ' + daysToCollect + ' days. ' +
-                    'Cutting to ' + targetDays + ' days frees up $' +
-                    Math.round(projectedGain).toLocaleString() + ' in working capital  money you already earned, available sooner.</p>';
+                whyHtml = '<p>You\'re collecting in <strong>' + daysToCollect + ' days</strong>. ' +
+                    'Cutting to <strong>' + targetDays + ' days</strong> frees up ' +
+                    '<strong>$' + projectedGain.toLocaleString() + '</strong> in working capital.</p>' +
+                    '<p>Faster collection means less borrowing, more flexibility, and the ability ' +
+                    'to reinvest in growth sooner.</p>';
 
             } else {
-                // Lead Volume
                 var currentLeads = Number(raw.leadsPerMonth) || 0;
                 var targetLeads = Math.round(currentLeads * 1.5);
                 var additionalDealsLV = Math.round((targetLeads - currentLeads) * conversionRate);
                 projectedGain = additionalDealsLV * avgDealValue;
 
-                whyHtml = '<p>You\'re generating ' + currentLeads + ' leads/mo. ' +
-                    'Scaling to ' + targetLeads + ' at your current ' + (conversionRate * 100).toFixed(0) + '% close rate adds ' +
-                    additionalDealsLV + ' deal' + (additionalDealsLV !== 1 ? 's' : '') +
-                    '/mo  $' + Math.round(projectedGain).toLocaleString() + ' in new revenue.</p>';
+                whyHtml = '<p>You\'re generating <strong>' + currentLeads + ' leads/mo</strong>. ' +
+                    'Scaling to <strong>' + targetLeads + '</strong> at your ' +
+                    '<strong>' + (conversionRate * 100).toFixed(1) + '%</strong> close rate adds ' +
+                    '<strong>' + additionalDealsLV + ' deal' + (additionalDealsLV !== 1 ? 's' : '') + '/mo</strong>.</p>' +
+                    '<p>At <strong>$' + avgDealValue.toLocaleString() + '</strong> per deal, that\'s ' +
+                    '<strong>$' + Math.round(projectedGain).toLocaleString() + '/mo</strong> in new revenue.</p>';
             }
 
             if (projectedGain > 0) {
@@ -789,7 +803,7 @@
             }
 
             document.getElementById('whyContent').innerHTML = whyHtml;
-        }
+                }
 
 
         // --- Metric Popover ---
