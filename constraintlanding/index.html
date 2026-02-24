@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scalyst | Structural Business Clarity</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Deeper, more sophisticated tonal palette */
+            --bg-color: #F2F3F1;
+            --bg-alt: #E8EBE8;
+            --bg-dark: #0E1712;
+            --surface-color: #FFFFFF;
+            --text-primary: #0F1712;
+            --text-secondary: #3D4D44;
+            --text-tertiary: #6E8075;
+            --text-light: #E8EBE8;
+            --text-muted: #9BAA9E;
+            --border-color: #C7D1CB;
+            --border-dark: #2A3B30;
+            --btn-primary-bg: #143623;
+            --btn-primary-text: #FFFFFF;
+            --btn-hover: #1A472E;
+            --accent-alert: #A8362B;
+            --accent-alert-bg: #FFF5F4;
+
+            /* Muted constraint card colors */
+            --card-1: #EAEBE5; /* Money In - Warm gray */
+            --card-2: #E3EBE6; /* Profit - Cool sage */
+            --card-3: #EBE7E1; /* Bandwidth - Soft sand */
+            --card-4: #E1E8EB; /* Conversion - Muted slate */
+            --card-5: #E8E4E7; /* Demand - Pale dusk */
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-serif: 'Newsreader', 'Georgia', serif;
+            --font-mono: 'JetBrains Mono', 'Courier New', Courier, monospace;
+            --radius-sm: 2px;
+            --radius-md: 4px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3, h4 { font-weight: 400; line-height: 1.15; letter-spacing: -0.02em; color: inherit; }
+        h1 { font-size: 3.75rem; }
+        h2 { font-size: 2.75rem; }
+        p { color: var(--text-secondary); }
+        a { text-decoration: none; color: inherit; transition: color 0.2s; }
+        ul, ol { list-style: none; }
+
+        /* Expanded container to fill whitespace better on full screens */
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
+        .section-padding { padding: 8rem 0; }
+
+        .editorial-num { font-family: var(--font-serif); font-style: italic; font-weight: 400; }
+        .text-sm { font-size: 0.875rem; }
+        .text-xs { font-size: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase; }
+
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 0.875rem 1.5rem; font-size: 0.9375rem; font-weight: 500;
+            border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s ease; border: none;
+        }
+        .btn-primary { background-color: var(--btn-primary-bg); color: var(--btn-primary-text); }
+        .btn-primary:hover { background-color: var(--btn-hover); }
+        nav { padding: 1.5rem 0; border-bottom: 1px solid var(--border-color); background: var(--bg-color); position: relative; z-index: 10; }
+        .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text-primary); }
+        .nav-links { display: flex; gap: 2.5rem; font-size: 0.875rem; font-weight: 500; }
+        .nav-links a { color: var(--text-secondary); }
+        .nav-links a:hover { color: var(--text-primary); }
+        /* HERO SECTION - RESTRUCTURED FOR FULL SCREEN */
+        .hero {
+            min-height: calc(100vh - 82px); /* Ensures it takes the full viewport minus the nav */
+            display: flex;
+            align-items: center;
+            padding: 4rem 0;
+            background: linear-gradient(to bottom, var(--bg-color), var(--bg-alt));
+            border-bottom: 1px solid var(--border-color);
+        }
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr; /* Balance text with the card */
+            gap: 6rem;
+            align-items: center;
+            width: 100%;
+        }
+        .hero-content h1 { margin-bottom: 1.5rem; }
+        .hero-content p.subtext { font-size: 1.25rem; margin-bottom: 3rem; max-width: 90%; line-height: 1.6; }
+        .hero-actions { display: flex; align-items: center; gap: 1.5rem; }
+        .hero-microtext { font-size: 0.75rem; color: var(--text-tertiary); line-height: 1.5; }
+        .hero-microtext strong { color: var(--text-primary); display: block; font-weight: 500; }
+        .report-card {
+            background: var(--surface-color); border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm); box-shadow: 0 32px 64px rgba(14, 23, 18, 0.08);
+            display: flex; flex-direction: column; overflow: hidden;
+            min-height: 600px; /* Gives the card substantial presence */
+        }
+        .report-header {
+            padding: 1.25rem 2rem; border-bottom: 1px solid var(--border-dark);
+            font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-light);
+            text-transform: uppercase; letter-spacing: 0.05em; background: var(--btn-primary-bg);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .report-header span.status { color: #8FB59F; }
+        .report-body {
+            padding: 3rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .data-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1.25rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); }
+        .data-row .label { font-size: 0.9375rem; color: var(--text-secondary); }
+        .data-row .value { font-size: 1.0625rem; font-weight: 500; color: var(--text-primary); }
+        .data-row .value.alert { color: var(--accent-alert); font-weight: 600; background: var(--accent-alert-bg); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); }
+
+        .interaction-note {
+            background: var(--bg-alt); padding: 1.5rem; border-left: 3px solid var(--text-tertiary);
+            font-size: 0.9375rem; margin: 2rem 0; color: var(--text-secondary); line-height: 1.6;
+        }
+        .interaction-note strong { color: var(--text-primary); font-weight: 600; display: block; margin-bottom: 0.25rem; }
+
+        .action-plan { margin-top: auto; border: 1px solid var(--border-color); background: var(--surface-color); padding: 1.75rem; position: relative; }
+        .action-plan::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--btn-primary-bg); }
+        .plan-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-primary); margin-bottom: 1.25rem; font-weight: 600; }
+        .action-plan ol { margin-left: 0; counter-reset: custom-counter; display: flex; flex-direction: column; gap: 1.25rem; }
+        .action-plan li { position: relative; padding-left: 2.5rem; font-size: 0.9375rem; color: var(--text-primary); line-height: 1.5; font-weight: 500; }
+        .action-plan li::before {
+            content: counter(custom-counter); counter-increment: custom-counter;
+            position: absolute; left: 0; top: 0; width: 1.5rem; height: 1.5rem;
+            background: var(--bg-alt); border: 1px solid var(--border-color); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-secondary);
+        }
+        /* CONSTRAINTS SECTION */
+        .framing { background: var(--surface-color); border-bottom: 1px solid var(--border-color); }
+        .section-header { margin-bottom: 4rem; max-width: 650px; }
+        .section-header h2 { margin-bottom: 1.25rem; }
+        .section-header p { font-size: 1.125rem; line-height: 1.6; }
+
+        .flip-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
+        .flip-card { height: 280px; perspective: 1000px; cursor: default; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.3s ease; transform-style: preserve-3d; }
+        .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+        }
+
+        /* Individual Card Colors */
+        .card-money .flip-card-front, .card-money .flip-card-back { background-color: var(--card-1); }
+        .card-profit .flip-card-front, .card-profit .flip-card-back { background-color: var(--card-2); }
+        .card-bandwidth .flip-card-front, .card-bandwidth .flip-card-back { background-color: var(--card-3); }
+        .card-conversion .flip-card-front, .card-conversion .flip-card-back { background-color: var(--card-4); }
+        .card-demand .flip-card-front, .card-demand .flip-card-back { background-color: var(--card-5); }
+        .flip-card-front {
+            display: flex; align-items: center; justify-content: center; text-align: center; padding: 1.5rem;
+            font-size: 1.125rem; font-weight: 500; color: var(--text-primary);
+        }
+        .flip-card-back {
+            transform: rotateY(180deg); padding: 2rem 1.5rem;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .flip-card-back h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 1.25rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 0.5rem; font-weight: 600; }
+        .back-item { margin-bottom: 0.875rem; font-size: 0.875rem; color: var(--text-primary); line-height: 1.4; }
+        .back-item:last-child { margin-bottom: 0; }
+        .back-item span { color: var(--text-secondary); display: block; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.15rem; font-weight: 500; }
+        /* HOW IT WORKS */
+        .how-it-works { background: var(--bg-alt); border-bottom: 1px solid var(--border-color); }
+        .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4rem; margin-top: 5rem; }
+        .step-col { position: relative; }
+        .step-col::before { content: ''; position: absolute; top: 1.25rem; left: 4rem; right: -2rem; height: 1px; background: var(--border-color); z-index: 1; }
+        .step-col:last-child::before { display: none; }
+        .step-num {
+            width: 2.5rem; height: 2.5rem; background: var(--surface-color); border: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: center; border-radius: 50%;
+            font-family: var(--font-serif); font-size: 1.125rem; margin-bottom: 2rem; position: relative; z-index: 2; color: var(--text-primary);
+        }
+        .step-col h3 { font-size: 1.25rem; margin-bottom: 1rem; color: var(--text-primary); }
+        .step-col p { font-size: 0.9375rem; line-height: 1.6; }
+        /* FIXING THE WRONG PROBLEM */
+        .wrong-problem { background: var(--bg-dark); color: var(--text-light); }
+        .wrong-problem h2 { color: var(--surface-color); margin-bottom: 1rem; }
+        .wrong-problem p { color: var(--text-muted); font-size: 1.125rem; }
+        .wrong-problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; }
+        .sticky-header { position: sticky; top: 6rem; }
+        .problem-list { display: flex; flex-direction: column; gap: 3rem; border-left: 1px solid var(--border-dark); padding-left: 3rem; }
+        .problem-item h3 { font-size: 1.25rem; color: var(--surface-color); margin-bottom: 0.75rem; font-weight: 400; }
+        .problem-item p { font-size: 1rem; color: var(--text-muted); line-height: 1.6; }
+        /* DIFFERENTIATION */
+        .differentiation { background: var(--surface-color); border-bottom: 1px solid var(--border-color); }
+        .diff-narrative { max-width: 1000px; margin: 0 auto; text-align: center; }
+        .diff-narrative h2 { margin-bottom: 4rem; }
+        .diff-grid { display: flex; flex-direction: column; gap: 2rem; text-align: left; }
+        .diff-row { display: grid; grid-template-columns: 1fr 1fr; padding: 2.5rem; background: var(--bg-alt); border: 1px solid var(--border-color); border-radius: var(--radius-sm); align-items: center; gap: 2rem; }
+        .diff-row .old-way { color: var(--text-secondary); font-size: 1.125rem; }
+        .diff-row .new-way { color: var(--text-primary); font-size: 1.125rem; font-weight: 500; border-left: 2px solid var(--btn-primary-bg); padding-left: 2.5rem; }
+        /* TESTIMONIALS */
+        .testimonials { background: var(--bg-color); border-bottom: 1px solid var(--border-color); }
+        .test-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; margin-top: 4rem; }
+        .test-card { padding: 3rem 2.5rem; border: 1px solid var(--border-color); background: var(--surface-color); border-radius: var(--radius-sm); display: flex; flex-direction: column; justify-content: space-between; }
+        .test-card p { font-family: var(--font-serif); font-size: 1.125rem; color: var(--text-primary); margin-bottom: 3rem; line-height: 1.6; }
+        .test-author-meta h4 { font-size: 0.875rem; margin-bottom: 0.25rem; font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
+        .test-author-meta span { font-size: 0.875rem; color: var(--text-secondary); }
+        /* FAQ */
+        .faq { background: var(--surface-color); border-bottom: 1px solid var(--border-color); }
+        .faq-grid { max-width: 850px; }
+        .faq-item { border-bottom: 1px solid var(--border-color); padding: 2.5rem 0; }
+        .faq-item:first-child { border-top: 1px solid var(--border-color); }
+        .faq-item h3 { font-size: 1.125rem; margin-bottom: 1rem; color: var(--text-primary); font-weight: 500; }
+        .faq-item p { font-size: 1rem; line-height: 1.6; color: var(--text-secondary); }
+        /* CTA & FOOTER */
+        .cta-section { background: var(--btn-primary-bg); color: var(--surface-color); text-align: center; padding: 8rem 0; }
+        .cta-section h2 { font-size: 3rem; margin-bottom: 1.5rem; color: var(--surface-color); }
+        .cta-section p { font-size: 1.25rem; margin-bottom: 3rem; color: #9AB3A5; }
+        .cta-section .btn-primary { background: var(--surface-color); color: var(--btn-primary-bg); padding: 1rem 2rem; font-size: 1rem; }
+        .cta-section .btn-primary:hover { background: var(--bg-alt); }
+        footer { background: var(--bg-color); padding: 5rem 0 3rem; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 4rem; margin-bottom: 5rem; }
+        .footer-col h4 { font-size: 0.75rem; margin-bottom: 1.5rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; font-family: var(--font-mono); }
+        .footer-col ul { display: flex; flex-direction: column; gap: 1rem; }
+        .footer-col a { font-size: 0.875rem; color: var(--text-secondary); }
+        .footer-col a:hover { color: var(--text-primary); }
+        .footer-logo { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); margin-bottom: 1rem; }
+        .footer-bottom { padding-top: 2rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-tertiary); font-family: var(--font-mono); }
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .flip-grid { grid-template-columns: repeat(3, 1fr); }
+            .test-grid { grid-template-columns: repeat(2, 1fr); }
+            .wrong-problem-grid { grid-template-columns: 1fr; gap: 4rem; }
+            .sticky-header { position: relative; top: 0; }
+            .problem-list { padding-left: 0; border-left: none; border-top: 1px solid var(--border-dark); padding-top: 3rem; }
+        }
+        @media (max-width: 768px) {
+            .hero { min-height: auto; padding: 5rem 0; display: block; }
+            .hero-grid { grid-template-columns: 1fr; gap: 4rem; }
+            .flip-grid { grid-template-columns: repeat(2, 1fr); }
+            .how-grid { grid-template-columns: 1fr; gap: 3rem; }
+            .step-col::before { display: none; }
+            .diff-row { grid-template-columns: 1fr; gap: 1.5rem; padding: 1.5rem; }
+            .diff-row .new-way { border-left: none; border-top: 2px solid var(--btn-primary-bg); padding-left: 0; padding-top: 1.5rem; }
+            .test-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+        }
+        @media (max-width: 480px) {
+            .hero-content h1 { font-size: 2.75rem; }
+            .flip-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container nav-inner">
+            <div class="logo">Scalyst</div>
+            <div class="nav-links">
+                <a href="#constraints">The Model</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#testimonials">Users</a>
+                <a href="#faq">FAQ</a>
+            </div>
+            <a href="/diagnostic/" class="btn btn-primary text-sm">Run Diagnostic</a>
+        </div>
+    </nav>
+    <main>
+        <section class="hero">
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <h1>Build a structurally sound business.</h1>
+                    <p class="subtext">Scalyst identifies the exact bottleneck limiting your growth right now, so you know exactly what to fix next. No financial training required.</p>
+                    <div class="hero-actions">
+                        <a href="/diagnostic/" class="btn btn-primary">Run Diagnostic</a>
+                        <div class="hero-microtext">
+                            <strong>No login required.</strong>
+                            Takes 5 minutes.
+                        </div>
+                    </div>
+                </div>
+                <div class="report-card">
+                    <div class="report-header">
+                        <span>Diagnostic Output // Generated</span>
+                        <span class="status">System Active</span>
+                    </div>
+                    <div class="report-body">
+                        <div>
+                            <div class="data-row">
+                                <span class="label">Primary Constraint</span>
+                                <span class="value alert">Operational Bandwidth</span>
+                            </div>
+                            <div class="data-row">
+                                <span class="label">Severity Tier</span>
+                                <span class="value">Critical</span>
+                            </div>
+                            <div class="data-row" style="border-bottom: none; padding-bottom: 0; margin-bottom: 0;">
+                                <span class="label">Secondary Pressure</span>
+                                <span class="value">Profit You Keep</span>
+                            </div>
+
+                            <div class="interaction-note">
+                                <strong>Interaction Alert</strong>
+                                High delivery workload is masking low per-client profitability. Effort is scaling faster than revenue.
+                            </div>
+                        </div>
+                        <div class="action-plan">
+                            <div class="plan-title">90-Day Structural Directive</div>
+                            <ol>
+                                <li>Pause net-new client intake for 30 days.</li>
+                                <li>Increase pricing by 20% on next 3 renewals.</li>
+                                <li>Standardize core delivery milestone checklist.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="framing section-padding" id="constraints">
+            <div class="container">
+                <div class="section-header">
+                    <h2>All constraints exist. One dominates.</h2>
+                    <p>Every service business operates under the same five structural forces. You don't need specialized training to understand them. You just need to know which one is binding your growth today.</p>
+                </div>
+
+                <div class="flip-grid">
+                    <div class="flip-card card-money">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">Money In</div>
+                            <div class="flip-card-back">
+                                <h4>Money In</h4>
+                                <div class="back-item"><span>What it means</span>Cash available today.</div>
+                                <div class="back-item"><span>How it shows up</span>Stressing about payroll.</div>
+                                <div class="back-item"><span>How it limits</span>Inability to invest in team.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flip-card card-profit">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">Profit You Keep</div>
+                            <div class="flip-card-back">
+                                <h4>Profit You Keep</h4>
+                                <div class="back-item"><span>What it means</span>What is left after delivery.</div>
+                                <div class="back-item"><span>How it shows up</span>Working harder, flat bank balance.</div>
+                                <div class="back-item"><span>How it limits</span>High revenue, zero safety net.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card card-bandwidth">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">Operational Bandwidth</div>
+                            <div class="flip-card-back">
+                                <h4>Operational Bandwidth</h4>
+                                <div class="back-item"><span>What it means</span>Ability to deliver work.</div>
+                                <div class="back-item"><span>How it shows up</span>Quality drops, weekend work.</div>
+                                <div class="back-item"><span>How it limits</span>Cannot absorb new clients.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card card-conversion">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">Converting Interest</div>
+                            <div class="flip-card-back">
+                                <h4>Converting Interest</h4>
+                                <div class="back-item"><span>What it means</span>Turning leads into revenue.</div>
+                                <div class="back-item"><span>How it shows up</span>Lots of calls, few deals closed.</div>
+                                <div class="back-item"><span>How it limits</span>Wasted attention and marketing.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card card-demand">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">Demand Consistency</div>
+                            <div class="flip-card-back">
+                                <h4>Demand Consistency</h4>
+                                <div class="back-item"><span>What it means</span>Regular inbound inquiries.</div>
+                                <div class="back-item"><span>How it shows up</span>Feast or famine revenue.</div>
+                                <div class="back-item"><span>How it limits</span>Inability to predict or plan.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="how-it-works section-padding" id="how-it-works">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Stop guessing. Apply a model.</h2>
+                    <p>A structured approach to unblocking revenue and removing founder overwhelm.</p>
+                </div>
+                <div class="how-grid">
+                    <div class="step-col">
+                        <div class="step-num">1</div>
+                        <h3>Map the Structure</h3>
+                        <p>Answer specific questions about your operational load, basic financial health, and sales velocity. No spreadsheets to upload. Just structural realities.</p>
+                    </div>
+                    <div class="step-col">
+                        <div class="step-num">2</div>
+                        <h3>Isolate the Bottleneck</h3>
+                        <p>The engine maps interaction effects across your business to isolate the single variable currently holding you back.</p>
+                    </div>
+                    <div class="step-col">
+                        <div class="step-num">3</div>
+                        <h3>Execute the Sequence</h3>
+                        <p>Receive a targeted severity score and a strict plan detailing exactly what to prioritize, and more importantly, what to defer.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="wrong-problem section-padding">
+            <div class="container wrong-problem-grid">
+                <div class="sticky-header">
+                    <h2>Fixing the wrong problem delays growth.</h2>
+                    <p>When you fix the wrong constraint at the wrong time, effort compounds but relief doesn't. Doing the right thing at the wrong time is just as destructive as doing the wrong thing.</p>
+                </div>
+                <div class="problem-list">
+                    <div class="problem-item">
+                        <h3>Hiring won't fix thin margins.</h3>
+                        <p>Adding more delivery capacity to a broken pricing model just accelerates your cash burn and increases management overhead.</p>
+                    </div>
+                    <div class="problem-item">
+                        <h3>More ads won't fix low conversion.</h3>
+                        <p>Pouring money into lead generation when your sales process can't close deals only wastes attention and capital.</p>
+                    </div>
+                    <div class="problem-item">
+                        <h3>More effort won't fix operational overload.</h3>
+                        <p>Working weekends doesn't build wealth; it masks a broken delivery system that needs standardization, not more hours.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="differentiation section-padding">
+            <div class="container diff-narrative">
+                <h2>Advice is abundant.<br>Diagnosis is rare.</h2>
+                <div class="diff-grid">
+                    <div class="diff-row">
+                        <div class="old-way">Courses assume your problem.</div>
+                        <div class="new-way">Scalyst identifies it.</div>
+                    </div>
+                    <div class="diff-row">
+                        <div class="old-way">Dashboards show numbers.</div>
+                        <div class="new-way">Scalyst interprets structural pressure.</div>
+                    </div>
+                    <div class="diff-row">
+                        <div class="old-way">AI generates endless ideas.</div>
+                        <div class="new-way">Scalyst isolates the binding variable.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="testimonials section-padding" id="testimonials">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Hear what early users are saying.</h2>
+                </div>
+                <div class="test-grid">
+                    <div class="test-card">
+                        <p>"I thought we needed more leads. The engine showed our delivery was actually breaking and masking as a sales issue. We fixed fulfillment and doubled our profit without spending a single dollar more on marketing."</p>
+                        <div class="test-author-meta">
+                            <h4>Service Founder</h4>
+                            <span>$60k / month</span>
+                        </div>
+                    </div>
+                    <div class="test-card">
+                        <p>"We spent six months trying to build a new marketing funnel, but Scalyst flagged that our core issue was actually client retention and onboarding capacity. We paused the ads, fixed the leak, and our revenue finally stabilized. A complete correction of our misprioritization."</p>
+                        <div class="test-author-meta">
+                            <h4>Consultancy Founder</h4>
+                            <span>$85k / month</span>
+                        </div>
+                    </div>
+                    <div class="test-card">
+                        <p>"It completely removed the emotional weight of deciding what to do next. Just a clear, structural directive. We knew exactly what to ignore for the next 90 days, which was the biggest relief."</p>
+                        <div class="test-author-meta">
+                            <h4>Agency Owner</h4>
+                            <span>$110k / month</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="faq section-padding" id="faq">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Common Questions</h2>
+                </div>
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <h3>Is this just another assessment?</h3>
+                        <p>No. Most assessments give you a generic score out of 100 and a list of 50 things to improve. Scalyst is a deterministic engine. It forces a ranking of constraints and gives you one primary focus area, telling you exactly what to ignore.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>What types of businesses is this for?</h3>
+                        <p>It is specifically built for founder-led service businessesâagencies, consultancies, and B2B service providersâgenerating between $20K and $150K per month in revenue.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>Can 12 inputs really diagnose my business?</h3>
+                        <p>Yes. By asking about structural tension rather than specific bank balances, we map the physics of your business. If your team is working weekends but your bank account is flat, we don't need line-item accounting to know you have a critical pricing and margin constraint.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>Do I need financial training to use this?</h3>
+                        <p>Not at all. The engine translates complex business mechanics into plain language. We talk about "Money In" and "Operational Bandwidth," making structural clarity accessible.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>What happens after the 90-day plan?</h3>
+                        <p>When you resolve your primary constraint, the pressure in your business will shift to a new bottleneck. You simply run the diagnostic again to find your next strategic focus.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>Is this replacing consulting?</h3>
+                        <p>It replaces the costly discovery phase of consulting. Instead of paying for an expert to figure out what's wrong, you use Scalyst to diagnose the root issue instantly, saving your money and time for execution.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="cta-section">
+            <div class="container">
+                <h2>Clarity is one diagnostic away.</h2>
+                <p>See exactly what is limiting your growth right now.</p>
+                <a href="/diagnostic/" class="btn btn-primary">Run Diagnostic</a>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">Scalyst</div>
+                    <p style="color: var(--text-secondary); max-width: 250px; font-size: 0.875rem; line-height: 1.5;">
+                        Structural business clarity for founder-led service businesses.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="/diagnostic/">Diagnostic Engine</a></li>
+                        <li><a href="#constraints">Methodology</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 Scalyst. All rights reserved.</span>
+                <span>Built for Founders.</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
