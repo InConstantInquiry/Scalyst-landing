@@ -1,4 +1,5 @@
 {
+        "cleanUrls": true,
     "redirects": [
         { "source": "/dashboard", "destination": "https://app.scalyst.digital/dashboard", "permanent": false },
         { "source": "/dashboard/", "destination": "https://app.scalyst.digital/dashboard", "permanent": false },
